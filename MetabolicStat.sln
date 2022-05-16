@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatTest", "StatTest\StatTest.csproj", "{3DA7BCFC-2DC0-433F-A6A1-C7BBB56370A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetabolicStat", "MetabolicStat\MetabolicStat.csproj", "{E7E3552A-F812-4832-B632-232CE8C11D98}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DA7BCFC-2DC0-433F-A6A1-C7BBB56370A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DA7BCFC-2DC0-433F-A6A1-C7BBB56370A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DA7BCFC-2DC0-433F-A6A1-C7BBB56370A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DA7BCFC-2DC0-433F-A6A1-C7BBB56370A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7E3552A-F812-4832-B632-232CE8C11D98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7E3552A-F812-4832-B632-232CE8C11D98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7E3552A-F812-4832-B632-232CE8C11D98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7E3552A-F812-4832-B632-232CE8C11D98}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {848DA14D-9BDB-46F0-AE68-1B24CC6BE3C5}
+	EndGlobalSection
+EndGlobal

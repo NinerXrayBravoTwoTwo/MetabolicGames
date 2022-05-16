@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MetabolicStat": {
+      "commandName": "Project",
+      "commandLineArgs": "-file c:\\\\MetabolicData\\data-export.csv"
+    }
+  }
+}
