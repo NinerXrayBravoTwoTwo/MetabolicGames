@@ -339,7 +339,7 @@ public class Statistic
         {
             var isInfin = double.IsPositiveInfinity(Slope());
             result = isInfin
-                ? "NaN"
+                ? $"NaN - {N}"
                 : $"Cor: {Correlation():F4} N: {N} MeanX: {MeanX():F2} MeanY: {MeanY():F2} Slp: {Slope():F2}  (Q:x{Qx():F3} y{Qy():F3})  (Q2: x{Qx2():F3} y{Qy2():F3})  Yincpt: {YIntercept():F3}, X({MinX:0.##} - {MaxX:0.##}), Y: ({MinY:0.####} - {MaxY:0.####}), N: {N}, isNAN:{IsNaN}";
         }
         catch (Exception error)

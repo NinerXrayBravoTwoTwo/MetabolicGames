@@ -1,4 +1,3 @@
-using System;
 using MetabolicStat.Program;
 using MetabolicStat.StatMath;
 using Xunit;

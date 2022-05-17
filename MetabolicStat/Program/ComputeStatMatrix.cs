@@ -85,8 +85,8 @@ public class ComputeStatMatrix
                 fuelStatList.Add(new FuelStat(source));
 
             // Debug, Locate the stat with the zero ketone
-            if (source.StartsWith("BK") && value == 0.0)
-                Console.WriteLine(fuelStatList.FirstOrDefault(x => x.Name.Equals(source)));
+            //if (source.StartsWith("BK") && value == 0.0)
+            //    Console.WriteLine(fuelStatList.FirstOrDefault(x => x.Name.Equals(source)));
 
             var fuelStat = fuelStatList.FirstOrDefault(x => x.Name.Equals(source));
             if (value <= 0)

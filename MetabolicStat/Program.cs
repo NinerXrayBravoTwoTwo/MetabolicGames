@@ -1,5 +1,4 @@
 ﻿using MetabolicStat.Program;
-using MetabolicStat.StatMath;
 using System.Text.RegularExpressions;
 
 void GenerateMetabolicReports(string? folderName, double bucketDays, FuelStat[] mgStats1, FuelStat[] bkStats1, List<GkiStat> list)
@@ -163,10 +162,10 @@ FuelStat[] Interpolate(FuelStat[] inputSet)
 
     IEnumerable<FuelStat>? resultSet = null;
 
-    if (inputSet.Any(item => item.IsNaN)) 
+    if (inputSet.Any(item => item.IsNaN))
         resultSet = InterpolateListFuelStats(inputSet.ToArray());
 
-    if (resultSet == null) 
+    if (resultSet == null)
         return inputSet;
 
     var enumerable = resultSet as FuelStat[] ?? resultSet.ToArray();
@@ -177,20 +176,22 @@ FuelStat[] Interpolate(FuelStat[] inputSet)
     return inputSet;
 }
 
-// Get the data subroutine
-static List<FuelStat> FuelStats(string file, double bucketDays, out int i, out TimeSpan timeSpan1)
+IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
 {
-    // Root of data generator
-    var statMatrix = new ComputeStatMatrix(file);
+    IEnumerable<FuelStat>? resultFuelStats = null;
+    try
+    {
+        var statMatrix = new ComputeStatMatrix(fileName);
+        resultFuelStats = statMatrix.Run(bucketDays, out int count, out TimeSpan timeSpan).ToList();
+        Console.WriteLine($"{count} values spanning {timeSpan} days\n");
+    }
+    catch (Exception error)
+    {
+        Console.WriteLine(error.Message);
+    }
 
-    var list = statMatrix.Run(bucketDays, out i, out timeSpan1).ToList();
-    return list;
+    return resultFuelStats != null ? resultFuelStats.ToArray() : null;
 }
-
-/* ****************** */
-
-const double bucketDays = 0.240378875; // 0.48075775; // 0.9615155; // 1.9023031; // 3.80460625;// 7.6092125; // 15.218425; // 30.43685
-
 
 #region Get the program arguments and read the data
 var argString = string.Join(" ", args);
@@ -211,144 +212,133 @@ if (match.Success == false || fileName.Equals(string.Empty))
     Console.WriteLine($"{args[1]} is not a valid file");
     return;
 }
-
-List<FuelStat> fuelStats;
-try
-{
-    fuelStats = FuelStats(fileName, bucketDays, out var count, out var timeSpan);
-    Console.WriteLine($"{count} values spanning {timeSpan} days\n");
-}
-catch (FileNotFoundException error)
-{
-    Console.WriteLine(error.Message);
-    return;
-}
-catch (DirectoryNotFoundException error)
-{
-    Console.WriteLine(error.Message);
-    return;
-}
-catch (ArgumentException error)
-{
-    Console.WriteLine(error.Message);
-    return;
-}
 #endregion
 
-// Root of Reporting
-// Create merged glucose stats = BG + CGM
-// Note:This does not handle the case where there is no CGM data but are BG data for a bucket, taken care of below this loop ...
-var mgList = new List<FuelStat>();
-foreach (var cgmStat in fuelStats.Where(x => x.Name.StartsWith("CGM-")).ToArray())
+/* ****************** */
+
+//const double bucketDay
+//s = 0.240378875; // 0.48075775; // 0.9615155; // 1.9023031; // 3.80460625;// 7.6092125; // 15.218425; // 30.43685
+
+foreach (var bucketDays in
+         new[] { 0.240378875, 0.48075775, 0.9615155, 1.9023031, 3.80460625, 7.6092125, 15.218425, 30.43685, 60.8737 }
+        )
 {
-    //mgList.Add(cgmStat);
-    //Lookup matching "BG"
-    var nameSplit = cgmStat.Name.Split('-');
-    var target = "BG-" + $"{nameSplit[1]}-{nameSplit[2]}";
+    var fuelStats = ReadDataFromFile(fileName, bucketDays);
 
-    var bgStat = fuelStats.FirstOrDefault(x => x.Name.Equals(target));
-
-    if (bgStat != null)
+    // Root of Reporting
+    if (fuelStats != null)
     {
-        var name = "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}";
-        var mglStat = new FuelStat(cgmStat);
-        mglStat.Add(bgStat); // Merge BK into CGM to create merged glucose
-        mgList.Add(mglStat);
+        var enumerable = fuelStats as FuelStat[] ?? fuelStats.ToArray();
+        var cgmList2 = enumerable.Where(x => x.Name.StartsWith("CGM-")).OrderBy(x => x.FromDateTime).ToArray();
+        var bgList2 = enumerable.Where(x => x.Name.StartsWith("BG-")).OrderBy(x => x.FromDateTime).ToArray();
+        var bkList2 = enumerable.Where(x => x.Name.StartsWith("BK-")).OrderBy(x => x.FromDateTime).ToArray();
+        var mgList2 = new List<FuelStat>();
+
+        foreach (var cgmStat in cgmList2)
+        {
+            //Lookup matching "BG"
+            var nameSplit = cgmStat.Name.Split('-');
+            var target = "BG-" + $"{nameSplit[1]}-{nameSplit[2]}";
+
+            var bgStat = bgList2.FirstOrDefault(x => x.Name.Equals(target));
+
+            if (bgStat != null)
+            {
+                var name = "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}";
+                var mglStat = new FuelStat(name, cgmStat);
+                mglStat.Add(bgStat); // Merge BK into CGM to create merged glucose
+                mgList2.Add(mglStat);
+            }
+        }
+
+        var mgListPlus = new List<FuelStat>(mgList2);
+
+        // Are there cases where there are no CGM buckets for corresponding BG buckets ?
+        foreach (var bgStat in bgList2.Where(x => x.Name.StartsWith("BG-")).ToArray())
+        {
+            var nameSplit = bgStat.Name.Split('-');
+
+            var target = "CGM-" + $"{nameSplit[1]}-{nameSplit[2]}";
+
+            var cgmStat = cgmList2.FirstOrDefault(x => x.Name.Equals(target));
+
+            if (cgmStat == null)
+            {
+                Console.WriteLine(
+                    $"Missing cgm bucket: {target} using => {bgStat.Name} with only BG data, N={bgStat.N}");
+                mgListPlus.Add(bgStat); // mglist will now require sorting before reporting
+            }
+        }
+
+        //// TODO: Are there cases where a bucket does not exist for the CGM range?
+        //var lastDate = DateTime.MinValue;
+
+
+        // Get interpolated BK list
+        var bkStats = bkList2.Select(item => new FuelStat(item)).OrderBy(x => x.FromDateTime).ToArray();
+        {
+            var nanCountBk = bkStats.Count(x => x.IsNaN);
+            if (nanCountBk > 0)
+            {
+                Console.WriteLine($"{nanCountBk} NaN before 1st interpolation pass");
+                bkStats = Interpolate(inputSet: bkStats);
+            }
+
+            nanCountBk = bkStats.Count(x => x.IsNaN);
+            if (nanCountBk > 0)
+            {
+                Console.WriteLine($"{nanCountBk} NaN before 2nd interpolation pass");
+                bkStats = Interpolate(inputSet: bkStats);
+            }
+
+            nanCountBk = bkStats.Count(x => x.IsNaN);
+            if (nanCountBk > 0)
+            {
+                Console.WriteLine($"{nanCountBk} NaN before 3rd interpolation pass");
+                Console.WriteLine("Exiting because BK  bucket interpolation is failing.");
+                return; // Exit because interpolation is failing
+            }
+        }
+
+        // Interpolate MGS list
+        var mgStats = mgListPlus.Select(item => new FuelStat(item)).OrderBy(x => x.FromDateTime).ToArray();
+        {
+            var nanCount = mgStats.Count(x => x.IsNaN);
+            if (nanCount > 0)
+            {
+                Console.WriteLine($"{nanCount} NaN before 1st interpolation pass");
+                mgStats = Interpolate(inputSet: mgStats);
+            }
+
+            nanCount = mgStats.Count(x => x.IsNaN);
+            if (nanCount > 0)
+            {
+                Console.WriteLine($"{nanCount} NaN before 2st interpolation pass");
+                mgStats = Interpolate(inputSet: mgStats);
+            }
+
+            nanCount = mgStats.Count(x => x.IsNaN);
+            if (nanCount > 0)
+                Console.WriteLine($"Warning: there are still {nanCount}'NaN' buckets after 2 interpolate passes.");
+        }
+
+        // Calculate GKI stats
+        var gkiList = (from bkStat in bkStats
+                    .Where(x => x.Name.StartsWith("BK-"))
+                       let nameSplit = bkStat.Name.Split('-')
+                       let target = "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}"  // BUG what if there is just a CGM for this bucket?
+                       let glStat = mgStats.FirstOrDefault(x => x.Name.Equals(target))
+                       where glStat != null
+                       let name = "GKI-" + $"{nameSplit[1]}-{nameSplit[2]}"
+                       select new GkiStat(glStat, bkStat, name))
+            .ToList(); // TODO: Is Glucose in mg OR mmol.  Some partial work has been done
+
+        // Write Reports
+        var directoryName = new FileInfo(fileName).DirectoryName;
+
+        GenerateMetabolicReports(directoryName, bucketDays, mgStats, bkStats, gkiList);
     }
 }
-
-// Are there cases where there are no CGM buckets for corresponding BG buckets ?
-foreach (var bgStat in fuelStats.Where(x => x.Name.StartsWith("BG-")).ToArray())
-{
-    var nameSplit = bgStat.Name.Split('-');
-
-    var target = "CGM-" + $"{nameSplit[1]}-{nameSplit[2]}";
-
-    var cgmStat = fuelStats.FirstOrDefault(x => x.Name.Equals(target));
-
-    if (cgmStat == null)
-    {
-        Console.WriteLine($"Missing cgm bucket: {target} using => {bgStat.Name} with only BG data, N={bgStat.N}");
-        mgList.Add(bgStat); // mglist will now require sorting before reporting
-    }
-}
-
-//// Are there cases where a bucket does not exist for the CGM range?
-//var lasttDate = DateTime.MinValue;
-//foreach (var item in mgList.OrderBy(x => x.FromDateTime))
-//{
-//    if
-
-
-//}
-
-//return;  //Exit for debug
-
-// Get interpolated BK list
-var bkStats = fuelStats.Where(x => x.Name.StartsWith("BK-"))
-.Select(item => new FuelStat(item)).ToArray();
-{
-    var nanCountBk = bkStats.Count(x => x.IsNaN);
-    if (nanCountBk > 0)
-    {
-        Console.WriteLine($"{nanCountBk} NaN before 1st interpolation pass");
-        bkStats = Interpolate(inputSet: bkStats);
-    }
-    nanCountBk = bkStats.Count(x => x.IsNaN);
-    if (nanCountBk > 0)
-    {
-        Console.WriteLine($"{nanCountBk} NaN before 2nd interpolation pass");
-        bkStats = Interpolate(inputSet: bkStats);
-    }
-    nanCountBk = bkStats.Count(x => x.IsNaN);
-    if (nanCountBk > 0)
-    {
-        Console.WriteLine($"{nanCountBk} NaN before 3rd interpolation pass");
-        //bkStats = Interpolate(bkStats);
-        Console.WriteLine("Exiting because BK  bucket interpolation is failing.");
-        return;  // Exit because interpolation is failing
-    }
-}
-
-
-
-// Interpolate MGS list
-// clone
-var mgStats = mgList.Select(item => new FuelStat(item)).OrderBy(x => x.FromDateTime).ToArray();
-{
-    var nanCount = mgStats.Count(x => x.IsNaN);
-    if (nanCount > 0)
-    {
-        Console.WriteLine($"{nanCount} NaN before 1st interpolation pass");
-        mgStats = Interpolate(inputSet: mgStats);
-    }
-
-    nanCount = mgStats.Count(x => x.IsNaN);
-    if (nanCount > 0)
-    {
-        Console.WriteLine($"{nanCount} NaN before 2st interpolation pass");
-        mgStats = Interpolate(inputSet: mgStats);
-    }
-
-    nanCount = mgStats.Count(x => x.IsNaN);
-    if (nanCount > 0)
-        Console.WriteLine($"Warning: there are still {nanCount}'NaN' buckets after 2 interpolate passes.");
-}
-
-// Calculate GKI stats
-var gkiList = (from bkStat in bkStats
-        .Where(x => x.Name.StartsWith("BK-"))
-               let nameSplit = bkStat.Name.Split('-')
-               let target = "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}"
-               let glStat = mgStats.FirstOrDefault(x => x.Name.Equals(target))
-               where glStat != null
-               let name = "GKI-" + $"{nameSplit[1]}-{nameSplit[2]}"
-               select new GkiStat(glStat, bkStat, name)).ToList(); // TODO: Is Glucose in mg OR mmol.  Some partial work has been done
-
-// Write Reports
-var directoryName = new FileInfo(fileName).DirectoryName;
-
-GenerateMetabolicReports(directoryName, bucketDays, mgStats, bkStats, gkiList);
 
 // Find this BK, It is a test case with 0 value BK that caused div by zero error, expected
 //8/1/2021,BK-8/1/2021-8/31/2021, 1.27, 0.1, 4.6, 0.1618, -1.32443, 41

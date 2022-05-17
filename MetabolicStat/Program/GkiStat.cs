@@ -1,5 +1,4 @@
 ﻿using MetabolicStat.StatMath;
-using Microsoft.VisualBasic;
 
 namespace MetabolicStat.Program;
 
@@ -41,9 +40,7 @@ internal class GkiStat : IFuelStat
             Qx = 0;
         }
 
-        //N = ketone.N;  // Makes sense since BK is the most significant factor of this ration calculation
-
-        // Save glucose and ketone stat for further confusing mazes to explore:29
+        // Save glucose and ketone stat for reporting
 
         KetoneStat = ketone;
         GlucoseStat = glucose;
@@ -63,11 +60,7 @@ internal class GkiStat : IFuelStat
     /// <summary>
     ///     Total The number of total glucose samples divided by the number of ketone samples ... debate please
     /// </summary>
-    public double N
-    {
-        get => GlucoseStat.N / KetoneStat.N;
-        // set => KetoneStat.N = value;
-    }
+    public double N => KetoneStat.N;
     public double MaxX { get; set; } // max value
     public double MinX { get; set; } // min value
     public double MaxY { get; set; } // end date
@@ -89,8 +82,8 @@ internal class GkiStat : IFuelStat
             + $",{MeanX:N2},{MinX:N2},{MaxX:N2},{Math.Sqrt(Qx2):N4},{Qx:N4},{N}" //GKI
             + $",{GlucoseStat.MeanX():N2},{GlucoseStat.MinX:N2},{GlucoseStat.MaxX:N2},{Math.Sqrt(GlucoseStat.Qx2()):N4},{GlucoseStat.Qx():N4},{GlucoseStat.N}" // GLU
             + $",{KetoneStat.MeanX():N2},{KetoneStat.MinX:N2},{KetoneStat.MaxX:N2},{Math.Sqrt(KetoneStat.Qx2()):N4},{KetoneStat.Qx():N4},{KetoneStat.N}" //BK
-            + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():N4}" 
-            + $",{GlucoseStat.MeanX()/18:N4}";
+            + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():N4}"
+            + $",{GlucoseStat.MeanX() / 18:N4}";
     }
 
     // Keep the Header grouped with the ToString method for ease of maintenance please

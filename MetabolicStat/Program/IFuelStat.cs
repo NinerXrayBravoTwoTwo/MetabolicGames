@@ -9,7 +9,7 @@ public interface IFuelStat
     /// <summary>
     ///     Number of Samples for this statistic.
     /// </summary>
-    double N { get;}
+    double N { get; }
 
     /// <summary>
     ///     Maximum Value of X (note; this is not reversed in Dec method)

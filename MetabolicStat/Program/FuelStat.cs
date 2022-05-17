@@ -14,11 +14,11 @@ public class FuelStat : Statistic, IFuelStat
         Name = name;
     }
 
-    //public FuelStat(string name, Statistic cloneMe, int interpolatedCount) : base(cloneMe)
-    //{
-    //    Name = name;
-    //    InterpolatedCount = interpolatedCount;
-    //}
+    public FuelStat(string name, FuelStat cloneMe) : base((Statistic)cloneMe)
+    {
+        Name = name;
+        InterpolatedCount = cloneMe.InterpolatedCount;
+    }
 
     public FuelStat(FuelStat cloneMe) : base((Statistic)cloneMe)
     {
@@ -59,7 +59,7 @@ public class FuelStat : Statistic, IFuelStat
         {
             var isInfin = double.IsPositiveInfinity(Slope());
             result = isInfin
-                ? "Nan"
+                ? $"Nan - {Name} - {N}"
                 : $"{FromDateTime.ToShortDateString()},{InterpolatedCount},{Name},{MeanX():N3},{MinX},{MaxX},{Qx():N4},{Qy():N4},{Slope():N4},{Qx2():N4},{Math.Sqrt(Qx2()):N4},{N}";
         }
         catch (Exception error)
