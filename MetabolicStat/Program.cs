@@ -110,7 +110,6 @@ void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable
         GlucoseReport(mgStats1, folderName, bucketDays);
     }
 }
-
 FuelStat[] Interpolate(FuelStat[] inputSet)
 {
     IEnumerable<FuelStat> InterpolateListFuelStats(IEnumerable<FuelStat> statsToCheckForNan)
@@ -175,7 +174,24 @@ FuelStat[] Interpolate(FuelStat[] inputSet)
 
     return inputSet;
 }
+FuelStat[] InterpolateReport(FuelStat[] inputSet)
+{
+    if (inputSet.Length == 0) return inputSet;
 
+    var resultSet = inputSet.Select(stat => new FuelStat(stat)).ToArray();
+
+    var limit = 0;
+    while (limit++ <= 3)
+    {
+        var nanCount = resultSet.Count(x => x.IsNaN);
+        if (nanCount <= 0) continue;
+
+        Console.WriteLine($"{nanCount} NaN before interpolation pass: '{limit}'");
+        resultSet = Interpolate(inputSet: resultSet);
+    }
+
+    return resultSet;
+}
 IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
 {
     IEnumerable<FuelStat>? resultFuelStats = null;
@@ -239,6 +255,7 @@ foreach (var bucketDays in
         var bgList2 = enumerable.Where(x => x.Name.StartsWith("BG-")).OrderBy(x => x.FromDateTime).ToArray();
         var bkList2 = enumerable.Where(x => x.Name.StartsWith("BK-")).OrderBy(x => x.FromDateTime).ToArray();
 
+        // Merge matching buckets of CGM and BG together
         var mgList2 = new List<FuelStat>();
 
         foreach (var cgmStat in cgmList2)
@@ -262,6 +279,7 @@ foreach (var bucketDays in
             }
         }
 
+        // Add the BG buckets that had no matching MG buckets to the MG list
         var mgListPlus = new List<FuelStat>(mgList2);
 
         // Are there cases where there are no CGM buckets for corresponding BG buckets ?
@@ -285,54 +303,20 @@ foreach (var bucketDays in
         //var lastDate = DateTime.MinValue;
 
         #region interpolate 
-
-        // Get interpolated BK list
-        var bkStats = bkList2.Select(item => new FuelStat(item)).OrderBy(x => x.FromDateTime).ToArray();
-        {
-            var nanCountBk = bkStats.Count(x => x.IsNaN);
-            if (nanCountBk > 0)
-            {
-                Console.WriteLine($"{nanCountBk} NaN before 1st interpolation pass");
-                bkStats = Interpolate(inputSet: bkStats);
-            }
-
-            nanCountBk = bkStats.Count(x => x.IsNaN);
-            if (nanCountBk > 0)
-            {
-                Console.WriteLine($"{nanCountBk} NaN before 2nd interpolation pass");
-                bkStats = Interpolate(inputSet: bkStats);
-            }
-
-            nanCountBk = bkStats.Count(x => x.IsNaN);
-            if (nanCountBk > 0)
-            {
-                Console.WriteLine($"{nanCountBk} NaN before 3rd interpolation pass");
-                Console.WriteLine("Exiting because BK  bucket interpolation is failing.");
-                return; // Exit because interpolation is failing
-            }
-        }
+        var bkStats = InterpolateReport(
+            bkList2
+            .Select(item => new FuelStat(item))
+            .OrderBy(x => x.FromDateTime)
+            .ToArray()
+            );
 
         // Interpolate MGS list
-        var mgStats = mgListPlus.Select(item => new FuelStat(item)).OrderBy(x => x.FromDateTime).ToArray();
-        {
-            var nanCount = mgStats.Count(x => x.IsNaN);
-            if (nanCount > 0)
-            {
-                Console.WriteLine($"{nanCount} NaN before 1st interpolation pass");
-                mgStats = Interpolate(inputSet: mgStats);
-            }
-
-            nanCount = mgStats.Count(x => x.IsNaN);
-            if (nanCount > 0)
-            {
-                Console.WriteLine($"{nanCount} NaN before 2st interpolation pass");
-                mgStats = Interpolate(inputSet: mgStats);
-            }
-
-            nanCount = mgStats.Count(x => x.IsNaN);
-            if (nanCount > 0)
-                Console.WriteLine($"Warning: there are still {nanCount}'NaN' buckets after 2 interpolate passes.");
-        }
+        var mgStats = InterpolateReport(
+                mgListPlus
+                    .Select(item => new FuelStat(item))
+                    .OrderBy(x => x.FromDateTime)
+                    .ToArray()
+                );
         #endregion
 
         // Calculate GKI stats
