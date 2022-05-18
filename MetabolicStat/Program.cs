@@ -1,7 +1,7 @@
 ﻿using MetabolicStat.Program;
 using System.Text.RegularExpressions;
 
-void GenerateMetabolicReports(string? folderName, double bucketDays, FuelStat[] mgStats1, FuelStat[] bkStats1, List<GkiStat> list)
+void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable<FuelStat> mgStats1, FuelStat[] bkStats1, List<GkiStat> list)
 {
     string ReportTitleBuilder(string reportName, string samples, double dayInterval, TimeSpan timeSpan)
     {
@@ -189,8 +189,7 @@ IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
     {
         Console.WriteLine(error.Message);
     }
-
-    return resultFuelStats != null ? resultFuelStats.ToArray() : null;
+    return resultFuelStats?.ToArray();
 }
 
 #region Get the program arguments and read the data
@@ -216,12 +215,19 @@ if (match.Success == false || fileName.Equals(string.Empty))
 
 /* ****************** */
 
-//const double bucketDay
-//s = 0.240378875; // 0.48075775; // 0.9615155; // 1.9023031; // 3.80460625;// 7.6092125; // 15.218425; // 30.43685
+// * A year is 365.24+ days, these day divisions are powers of 2 divisions of a year so reports see all the data and
+// * there are no gaps in display of available data
+// * 7.0238884615 days in a week
+// * 30.43685 is the number of days in month if a month goes into a year 12 times.
+// * 60.8737 days in two months
+// * 91.31055 days in a quarter
+// * 182.6211 days in half a year
+// * 365.2422 days in a year  
+// this is mainly for reporting my month quarter and year.
+// Write the three report stats GKI, Cgm/Bg, Bk for each bucket-day size.
 
 foreach (var bucketDays in
-         new[] { 0.240378875, 0.48075775, 0.9615155, 1.9023031, 3.80460625, 7.6092125, 15.218425, 30.43685, 60.8737 }
-        )
+         new[] { 0.240378875, 0.48075775, 0.9615155, 1.9023031, 3.80460625, 7.6092125, 15.218425, 30.43685, 60.8737, 91.31055 })
 {
     var fuelStats = ReadDataFromFile(fileName, bucketDays);
 
@@ -232,6 +238,7 @@ foreach (var bucketDays in
         var cgmList2 = enumerable.Where(x => x.Name.StartsWith("CGM-")).OrderBy(x => x.FromDateTime).ToArray();
         var bgList2 = enumerable.Where(x => x.Name.StartsWith("BG-")).OrderBy(x => x.FromDateTime).ToArray();
         var bkList2 = enumerable.Where(x => x.Name.StartsWith("BK-")).OrderBy(x => x.FromDateTime).ToArray();
+
         var mgList2 = new List<FuelStat>();
 
         foreach (var cgmStat in cgmList2)
@@ -248,6 +255,10 @@ foreach (var bucketDays in
                 var mglStat = new FuelStat(name, cgmStat);
                 mglStat.Add(bgStat); // Merge BK into CGM to create merged glucose
                 mgList2.Add(mglStat);
+            }
+            else
+            {
+                mgList2.Add(cgmStat);
             }
         }
 
@@ -270,9 +281,10 @@ foreach (var bucketDays in
             }
         }
 
-        //// TODO: Are there cases where a bucket does not exist for the CGM range?
+        //// TODO: Are there cases where a bucket does not exist for the CGM range?  Do I care? so far no data is invented to fill in gaps.
         //var lastDate = DateTime.MinValue;
 
+        #region interpolate 
 
         // Get interpolated BK list
         var bkStats = bkList2.Select(item => new FuelStat(item)).OrderBy(x => x.FromDateTime).ToArray();
@@ -321,6 +333,7 @@ foreach (var bucketDays in
             if (nanCount > 0)
                 Console.WriteLine($"Warning: there are still {nanCount}'NaN' buckets after 2 interpolate passes.");
         }
+        #endregion
 
         // Calculate GKI stats
         var gkiList = (from bkStat in bkStats

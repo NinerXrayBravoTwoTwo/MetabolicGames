@@ -9,18 +9,18 @@ public class FuelStat : Statistic, IFuelStat
         Name = name;
     }
 
-    public FuelStat(double x, double y, string name) : base(x, y)
+    public FuelStat( string name,double x, double y) : base(x, y / TimeSpan.TicksPerDay)
     {
         Name = name;
     }
 
-    public FuelStat(string name, FuelStat cloneMe) : base((Statistic)cloneMe)
+    public FuelStat(string name, FuelStat cloneMe) : base(cloneMe)
     {
         Name = name;
         InterpolatedCount = cloneMe.InterpolatedCount;
     }
 
-    public FuelStat(FuelStat cloneMe) : base((Statistic)cloneMe)
+    public FuelStat(FuelStat cloneMe) : base(cloneMe)
     {
         Name = cloneMe.Name;
         InterpolatedCount = cloneMe.InterpolatedCount;

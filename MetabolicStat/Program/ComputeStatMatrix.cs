@@ -4,7 +4,6 @@ namespace MetabolicStat.Program;
 
 // Todo: Add feature Sleep statistic values for and glucose
 // Todo: Add feature morning statistic value for ketone & GKI
-// Todo: Add bucketSize parameter
 
 public class ComputeStatMatrix
 {
@@ -14,12 +13,15 @@ public class ComputeStatMatrix
     {
         FileName = fileName;
 
-        // Kick off date the algorithm syncs with year fraction boundary's base 12 and fractions thereof
+        // Kick off date, algorithm syncs with year fraction boundary's at base 12 of year
+        // This garrentees that quarters line up with year boundaries for every data set.
+        // This ONLY WORKS IF BASE 12 fractions of a year are used for bucket sizes.
+        // For example to divide a year up into weeks 3
         // when year fractions or multiples are chosen for bucket-breaker
 
         _dateBreaker =
             DateTime.Parse(
-                @"01-01-2020 00:00 -0800"); // begin of first year. IFF datebreaker increment is set to a base 12 fraction of a year your buckets will align on year/month bountriess
+                @"01-01-2015 00:00 -0800"); // begin of first year. IFF datebreaker increment is set to a base 12 fraction of a year your buckets will align on year/month bountriess
     }
 
     public string FileName { get; internal set; }
@@ -81,23 +83,23 @@ public class ComputeStatMatrix
             else
                 continue; // data row is ignored
 
-            if (fuelStatList.Find(x => x.Name.Equals(source)) == null)
-                fuelStatList.Add(new FuelStat(source));
-
-            // Debug, Locate the stat with the zero ketone
-            //if (source.StartsWith("BK") && value == 0.0)
-            //    Console.WriteLine(fuelStatList.FirstOrDefault(x => x.Name.Equals(source)));
-
-            var fuelStat = fuelStatList.FirstOrDefault(x => x.Name.Equals(source));
             if (value <= 0)
                 value = 0.08; // Neither Glucose or ketone values can be negative. Zero is not possible either.
-            fuelStat!.Add(value, date.Ticks);
+
+            if (fuelStatList.Find(x => x.Name.Equals(source)) == null)
+            {
+                fuelStatList.Add(new FuelStat(source, value, date.Ticks));
+            }
+            else
+            {
+                var fuelStat = fuelStatList.FirstOrDefault(x => x.Name.Equals(source));
+                fuelStat!.Add(value, date.Ticks);
+            }
 
             minDate = Math.Min(date.Ticks, minDate);
             maxDate = Math.Max(date.Ticks, maxDate);
-
-            counter++;
         }
+        counter++;
 
         count = counter;
         timeSpan = TimeSpan.FromTicks(maxDate - minDate);
