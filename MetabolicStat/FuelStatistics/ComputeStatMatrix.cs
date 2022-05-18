@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace MetabolicStat.Program;
+namespace MetabolicStat.FuelStatistics;
 
 // Todo: Add feature Sleep statistic values for and glucose
 // Todo: Add feature morning statistic value for ketone & GKI

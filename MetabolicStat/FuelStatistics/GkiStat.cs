@@ -1,6 +1,6 @@
 ﻿using MetabolicStat.StatMath;
 
-namespace MetabolicStat.Program;
+namespace MetabolicStat.FuelStatistics;
 
 internal class GkiStat : IFuelStat
 {

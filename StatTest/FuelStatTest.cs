@@ -1,4 +1,4 @@
-using MetabolicStat.Program;
+using MetabolicStat.FuelStatistics;
 using MetabolicStat.StatMath;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,7 +18,7 @@ public class FuelStatTest
     public void EmptyFuelStatIsNan()
     {
         // create statistic
-        var test = new FuelStat("statA");
+        FuelStat? test = new("statA");
 
         Assert.True(test.IsNaN);
 

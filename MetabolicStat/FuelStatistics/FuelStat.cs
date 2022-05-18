@@ -1,6 +1,6 @@
 ﻿using MetabolicStat.StatMath;
 
-namespace MetabolicStat.Program;
+namespace MetabolicStat.FuelStatistics;
 
 public class FuelStat : Statistic, IFuelStat
 {
@@ -9,7 +9,7 @@ public class FuelStat : Statistic, IFuelStat
         Name = name;
     }
 
-    public FuelStat( string name,double x, double y) : base(x, y / TimeSpan.TicksPerDay)
+    public FuelStat(string name, double x, double y) : base(x, y / TimeSpan.TicksPerDay)
     {
         Name = name;
     }
