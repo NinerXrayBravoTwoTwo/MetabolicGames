@@ -85,6 +85,7 @@ FuelStat[] InterpolateReport(FuelStat[] inputSet)
 
     return resultSet;
 }
+
 IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
 {
     IEnumerable<FuelStat>? resultFuelStats = null;
