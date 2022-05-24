@@ -11,10 +11,9 @@ public class ComputeStatMatrix
     private DateTime _dateBreaker;
 
 
-    public ComputeStatMatrix(string fileName, IEnumerable<FuelStat> runOnceIsPlenty)
+    public ComputeStatMatrix(string fileName)
     {
         FileName = fileName;
-        _runOnceIsPlenty = runOnceIsPlenty;
 
         // Kick off date, algorithm syncs with year fraction boundary's at base 12 of year
         // This guarantees that quarters line up with year boundaries for every data set.
@@ -28,10 +27,6 @@ public class ComputeStatMatrix
     }
 
     public string FileName { get; internal set; }
-
-    private IEnumerable<FuelStat> _runOnceIsPlenty;
-    private int _countOnce;
-    private TimeSpan _intervalOnce;
 
     public IEnumerable<FuelStat> Run(double bucketDays, out int count, out TimeSpan timeSpan)
     {
@@ -116,9 +111,9 @@ public class ComputeStatMatrix
         }
         counter++;
 
-        count = _countOnce = counter;
-        timeSpan = _intervalOnce = TimeSpan.FromTicks(maxDate - minDate);
-        _runOnceIsPlenty = fuelStatList;
+        count =  counter;
+        timeSpan =  TimeSpan.FromTicks(maxDate - minDate);
+
         return fuelStatList;
     }
 

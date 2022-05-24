@@ -79,11 +79,11 @@ internal class GkiStat : IFuelStat
         // note: divided  ticks / day  by slope, ie value/t to  get slope/day or slope / month if mul by 30
         return
             $"{FromDateTime.ToShortDateString()},{Name}"
-            + $",{MeanX:N2},{MinX:N2},{MaxX:N2},{Math.Sqrt(Qx2):N4},{Qx:N4},{N}" //GKI
-            + $",{GlucoseStat.MeanX():N2},{GlucoseStat.MinX:N2},{GlucoseStat.MaxX:N2},{Math.Sqrt(GlucoseStat.Qx2()):N4},{GlucoseStat.Qx():N4},{GlucoseStat.N}" // GLU
-            + $",{KetoneStat.MeanX():N2},{KetoneStat.MinX:N2},{KetoneStat.MaxX:N2},{Math.Sqrt(KetoneStat.Qx2()):N4},{KetoneStat.Qx():N4},{KetoneStat.N}" //BK
-            + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():N4}"
-            + $",{GlucoseStat.MeanX() / 18:N4}";
+            + $",{MeanX:F2},{MinX:F2},{MaxX:F2},{Math.Sqrt(Qx2):F4},{Qx:F4},{N}" //GKI
+            + $",{GlucoseStat.MeanX():F2},{GlucoseStat.MinX:F2},{GlucoseStat.MaxX:F2},{Math.Sqrt(GlucoseStat.Qx2()):F4},{GlucoseStat.Qx():F4},{GlucoseStat.N}" // GLU
+            + $",{KetoneStat.MeanX():F2},{KetoneStat.MinX:F2},{KetoneStat.MaxX:F2},{Math.Sqrt(KetoneStat.Qx2()):F4},{KetoneStat.Qx():F4},{KetoneStat.N}" //BK
+            + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():F4}"
+            + $",{GlucoseStat.MeanX() / 18:F4}";
     }
 
     // Keep the Header grouped with the ToString method for ease of maintenance please

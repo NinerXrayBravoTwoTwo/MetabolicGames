@@ -60,7 +60,7 @@ public class FuelStat : Statistic, IFuelStat
             var isInfin = double.IsPositiveInfinity(Slope());
             result = isInfin
                 ? $"Nan - {Name} - {N}"
-                : $"{FromDateTime.ToShortDateString()},{InterpolatedCount},{Name},{MeanX():N3},{MinX},{MaxX},{Qx():N4},{Qy():N4},{Slope():N4},{Qx2():N4},{Math.Sqrt(Qx2()):N4},{N}";
+                : $"{FromDateTime.ToShortDateString()},{InterpolatedCount},{Name},{MeanX():F3},{MinX},{MaxX},{Qx():F4},{Qy():F4},{Slope():F4},{Qx2():F4},{Math.Sqrt(Qx2()):F4},{N}";
         }
         catch (Exception error)
         {
