@@ -1,8 +1,11 @@
 # MetabolicStat
 
+## LICENSE GLP - 3
+
+
 ## 42?
 
-Okay ... Now that you have collected your Glucose and ketone data for a few months,
+Now that you have collected your Glucose and ketone data for a few months,
 (Congradulations you now know that the answer to your question is 42 :) )
 how can you make sense of it and track your progress? 
 (i.e. What exactly was the question you wanted to answer anyway?)
