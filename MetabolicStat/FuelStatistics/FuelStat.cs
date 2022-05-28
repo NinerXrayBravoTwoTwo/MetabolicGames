@@ -74,7 +74,7 @@ public class FuelStat : Statistic, IFuelStat
 
     public static string Footer(int startRow, Statistic stat)
     {
-        var midBucket = new DateTime((long)stat.MeanY() );
+        //var midBucket = new DateTime((long)stat.MeanY() );
         var minDate = new DateTime((long)stat.MinY);
         var maxDate = new DateTime((long)stat.MaxY);
         return $",,{minDate.ToShortDateString()}-{maxDate.ToShortDateString()},{stat.MeanX():F2},{stat.MinX:F3},{stat.MaxX:F3},{stat.Qx():F3},{stat.Qy():F1},{stat.Slope():F4},{stat.Qx2():F3},{Math.Sqrt(stat.Qx2()):F3},{stat.N:N1}";

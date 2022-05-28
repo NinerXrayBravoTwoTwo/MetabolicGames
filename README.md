@@ -2,11 +2,9 @@ MetabolicStat
 
 ## LICENSE GPL - 3
 
-## DiSclAMERS
+## DISCLAIMERS
 
-This software is not affiliated with,  sponsored by, or compensated by any health care industry company or glucose montitoring company
-In particular although I get my data from both Keto-Mojo and Nutrisense neiter of these companies have contributed to this work or provided renumeration.
-This software has nothing to do with them
+This software is not affiliated with, sponsored by, or compensated by any health care industry company or glucose monitoring company. Neither Keto-Mojo or Nutrisense companies have contributed to this work or provided any renumeration. This software has nothing to do with them.
 
 Furthermore:
 
@@ -23,6 +21,8 @@ e> This software is based on a very old linear regression algorithm I originally
 f> None of the ‘medical’ data in this project represents private patient information protected by HIPAA.  It is all test data.
 
 ## SEE your doctor if you have concerns about your data values.
+
+
 
 ## 42?
 
