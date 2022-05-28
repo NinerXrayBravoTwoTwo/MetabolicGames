@@ -45,7 +45,7 @@ public class FuelStat : Statistic, IFuelStat
     }
 
     public DateTime FromDateTime => new((long)MinY * TimeSpan.TicksPerDay);
- 
+
     public DateTime ToDateTime => new((long)MaxY * TimeSpan.TicksPerDay);
 
     public string DateRange => $"{FromDateTime} -- {ToDateTime}";
@@ -71,4 +71,12 @@ public class FuelStat : Statistic, IFuelStat
     }
 
     public static string Header => "index,Interpolations,name,meanX,minX,maxX,Qx,Qy,slope,Qx2,sqrt(Qx2),N";
+
+    public static string Footer(int startRow, Statistic stat)
+    {
+        var midBucket = new DateTime((long)stat.MeanY() );
+        var minDate = new DateTime((long)stat.MinY);
+        var maxDate = new DateTime((long)stat.MaxY);
+        return $",,{minDate.ToShortDateString()}-{maxDate.ToShortDateString()},{stat.MeanX():F2},{stat.MinX:F3},{stat.MaxX:F3},{stat.Qx():F3},{stat.Qy():F1},{stat.Slope():F4},{stat.Qx2():F3},{Math.Sqrt(stat.Qx2()):F3},{stat.N:N1}";
+    }
 }

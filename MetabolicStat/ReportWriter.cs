@@ -1,4 +1,5 @@
 ﻿using MetabolicStat.FuelStatistics;
+using MetabolicStat.StatMath;
 
 namespace MetabolicStat;
 
@@ -19,22 +20,27 @@ internal static class ReportWriter
             var sum = new FuelStat("sumKetone");
             var samples = 0;
 
-            var result = listFuelStats.Where(x => x.Name.StartsWith("BK-"))
+            var statOfStats = new Statistic();
+
+            var result = listFuelStats
+                .Where(x => x.Name.StartsWith("BK-"))
                 .Select(item => new FuelStat(item)).ToArray();
 
             foreach (var item in result)
             {
                 sum.Add(item);
                 samples += (int)item.N;
+                statOfStats.Add(item.MeanX(), item.MeanY() * TimeSpan.TicksPerDay);
             }
 
             var report = new List<string>
             {
                 ReportTitleBuilder("BK", samples.ToString(), interval, sum.TimeSpan) // TITLE
+                , FuelStat.Footer(4, statOfStats)
                 , FuelStat.Header
-                , string.Join("\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString()))
+                , string.Join("\r\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString()))
+                , FuelStat.Footer(4, statOfStats)
             };
-
             File.WriteAllLines($"{writeFolderName}\\BK-{interval:N2}-days.csv", report.ToArray());
         }
 
@@ -57,8 +63,7 @@ internal static class ReportWriter
             var report = new List<string>
             {
                 ReportTitleBuilder("GKI", $"{ketoN}", interval, gkiSpan) // TITLE
-                ,
-                GkiStat.Header, string.Join('\n', gkiStats.Select(x => x.ToString()))
+                , GkiStat.Header, string.Join("\r\n", gkiStats.Select(x => x.ToString()))
             };
 
             File.WriteAllLines($"{writeFolderName}\\GKI-{interval:N2}-days.csv", report.ToArray());
