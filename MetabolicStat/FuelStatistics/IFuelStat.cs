@@ -34,16 +34,18 @@ public interface IFuelStat
     DateTime ToDateTime { get; }
 
     DateTime FromDateTime { get; }
+    bool IsNaN { get; }
 
     /// <summary>
     ///     mean x = sum(x) / n
     /// </summary>
     /// <returns>Mean of x</returns>
-    double MeanX();
+     double MeanX();
 
     /// <summary>
     ///     mean y = sum(y) / n
     /// </summary>
     /// <returns>Mean of y</returns>
-    double MeanY();
+     double MeanY();
+    
 }

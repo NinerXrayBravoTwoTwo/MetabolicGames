@@ -45,7 +45,7 @@ public class FuelStat : Statistic, IFuelStat
     }
 
     public DateTime FromDateTime => new((long)MinY * TimeSpan.TicksPerDay);
-
+ 
     public DateTime ToDateTime => new((long)MaxY * TimeSpan.TicksPerDay);
 
     public string DateRange => $"{FromDateTime} -- {ToDateTime}";

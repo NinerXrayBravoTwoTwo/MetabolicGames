@@ -79,17 +79,23 @@ public class StatisticTest
 
         double x = 0, y = -1;
 
-        while (x < 100)
+        while (x < 500)
             orig.Add(x++, y++);
         _testOutputHelper.WriteLine(orig.ToString());
 
-        var clone = new Statistic(orig);
+        var clone = new Statistic(orig); // Make a clone (new unrelated instance) of the statistic.
+
 
         Assert.False(orig.IsNaN);
         Assert.False(clone.IsNaN);
 
-        // test
-        clone.Add(orig);
+        // test - 
+        clone.Add(orig);  // Adding the original statistic to its clone, 
+                          // a> should only effect the clone.
+                          // b> number of samples should double
+                          // c> variance should remain the same 
+                          // d> other sum attributes should all be doubled.
+                          // e> Mean should remain the same.
 
         Assert.Equal(orig.N * 2, clone.N);
         Assert.Equal(orig.Qx2(), clone.Qx2());
@@ -99,6 +105,9 @@ public class StatisticTest
         Assert.Equal(orig.Sy * 2, clone.Sy);
         Assert.Equal(orig.Sy2 * 2, clone.Sy2);
         Assert.Equal(orig.Sxy * 2, clone.Sxy);
+
+        Assert.Equal(orig.MeanX(), clone.MeanX());
+        Assert.Equal(orig.MeanY(), clone.MeanY());
 
 
         Assert.False(clone.IsNaN);

@@ -2,8 +2,9 @@
 
 namespace MetabolicStat.FuelStatistics;
 
-internal class GkiStat : IFuelStat
+public class GkiStat : IFuelStat
 {
+
     // save mmol switch for other future calculations
     public bool IsGlucoseMmol { get; set; }
 
@@ -27,7 +28,7 @@ internal class GkiStat : IFuelStat
 
         MinY = Math.Min(glucose.MinY, ketone.MinY);
 
-        // Wild guess at variance, I believe this is correct
+        // Wild guess at variance, I believe this is incorrect
 
         Qx2 = glucose.Qx2() / conversion / ketone.Qx2();
 
@@ -50,9 +51,12 @@ internal class GkiStat : IFuelStat
     public double Qx2 { get; }
     public Statistic KetoneStat { get; internal set; }
     public Statistic GlucoseStat { get; internal set; }
-    internal double MeanX { get; set; }
-    internal double MeanY { get; set; }
+    public double MeanX { get; set; }
+    public double MeanY { get; set; }
     public DateTime FromDateTime => new((long)MinY * TimeSpan.TicksPerDay);
+
+    public bool IsNaN => GlucoseStat.IsNaN || KetoneStat.IsNaN;
+
     public DateTime ToDateTime => new((long)MaxY * TimeSpan.TicksPerDay);
     public string Name { get; set; }
     public string DateRange => $"{FromDateTime} -- {ToDateTime}";
@@ -73,6 +77,7 @@ internal class GkiStat : IFuelStat
     {
         return MeanY;
     }
+
     #region Report
     public override string ToString()
     {
