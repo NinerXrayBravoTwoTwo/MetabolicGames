@@ -1,7 +1,28 @@
-# MetabolicStat
+MetabolicStat
 
 ## LICENSE GPL - 3
 
+## DiSclAMERS
+
+This software is not affiliated with,  sponsored by, or compensated by any health care industry company or glucose montitoring company
+In particular although I get my data from both Keto-Mojo and Nutrisense neiter of these companies have contributed to this work or provided renumeration.
+This software has nothing to do with them
+
+Furthermore:
+
+a> There is nothing expressed or implied about this software's fitness of purpose, even the purpose of analyzing the intended statistics for which it is written.
+
+b> This software offers no medical advice. This software offers no diet advice. This software does not provide warnings or any judgments of any data.
+
+c> There are no guarantees expressed or implied.  This software is made available AS IS.
+
+d> I have no conflicts of interest by or for any company where that company is actively perusing wellness programs.
+
+e> This software is based on a very old linear regression algorithm I originally used on a TI-59 calculator in 1978. This statistical algorithm was apparently published in the 1890's.
+
+f> None of the ‘medical’ data in this project represents private patient information protected by HIPAA.  It is all test data.
+
+## SEE your doctor if you have concerns about your data values.
 
 ## 42?
 
