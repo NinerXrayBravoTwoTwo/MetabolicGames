@@ -1,6 +1,6 @@
 # MetabolicStat
 
-## LICENSE GLP - 3
+## LICENSE GPL - 3
 
 
 ## 42?
