@@ -22,39 +22,38 @@ f> None of the ‘medical’ data in this project represents private patient informa
 
 ## SEE your doctor if you have concerns about your data values.
 
-
-
 ## 42?
 
 Now that you have collected your Glucose and ketone data for a few months,
-(Congradulations you now know that the answer to your question is 42 :) )
+(Congratulations you now know that the answer to your question is 42 :))
 how can you make sense of it and track your progress? 
-(i.e. What exactly was the question you wanted to answer anyway?)
+(i.e., What exactly was the question you wanted to answer anyway?)
 
-This project is designed to help you find that answer, creating meaningful liniear regressions of 'value vs 'time', and allows the user to create detailed graphs
-with excell or other graphing tools, where you can explore your data with different types of graphs, run statistical analsis, and print reports to discuss with friends.
+This project is designed to help you find that answer, creating meaningful linear regressions of 'value vs 'time', and allows the user to create detailed graphs
+with excel or other graphing tools, where you can explore your data with different types of graphs, run statistical analysis, and print reports to discuss with friends.
 
 Besides an external spread sheet or other data graphing program there are no other tools required. Linear regression statistical math was published in journals 
-in the 1890's'  the software class to calculate this statistic is included in this application with documentation in that class.
+in the 1890s’ the software class to calculate this statistic is included in this application with documentation in that class.
 
-This project loads csv glucose and keytone data and computes linear regressions vs time of 
-GKI, Ketone, and Glucose for analisis and graphing purposes.
+This project loads csv glucose and ketone data and computes linear regressions vs time of 
+GKI, Ketone, and Glucose for analysis and graphing purposes.
 
 ## Purpose
 
-The purpose of doing this analisis is to be able to look at the data and search for releationships and patterns.
-This requires user involement. This software offers no advice or medical opinions on the meaning of different values.
+The purpose of doing this analysis is to enable the user to examine their glucose and ketone data and search for relationships and patterns.
+
+This process requires user involvement. This software offers no advice or medical opinions on the meaning of different values.
 There are no warning messages displayed or printed.
 
 Your glucose/meter sensors may give you readings that look concerning to you. In that event you should contact your doctor or go to urgent care.
-This software just crunches numbers. It makes no judgements. It gives no advice. It contains no recipies and does not recommend a diet.
+This software just crunches numbers. It makes no judgements. It gives no advice. It contains no recipes and does not recommend a diet.
 
 ## Summary
 
 Glucose (ketone) data set can quickly grow very large.  This is particularly true when a CGM is used to collect the data.
-Varius companies who provice a meter or CGM typically provide a data service to help customers grock their data.
-If you wanted to graph years worth of data there could eaisly be over 15 thousand records. This program selects data from an input data archive
-file, sort's in to histogram bins as a series of linear-regressions, and prints out the results for each linear 
+Various companies who provide a meter or CGM typically provide a data service to help customers ‘grock’ their data.
+If you wanted to graph years’ worth of data there could easily be over 15 thousand records. This program selects data from an input data archive
+file, sorts into histogram bins as a series of linear-regressions, and prints out the results for each linear 
 regression.
 
 Example:
