@@ -31,12 +31,12 @@ public class GkiStat : IFuelStat
         // Wild guess at variance, I believe this is incorrect
 
 
-        try
+        if (!glucose.IsNaN || !ketone.IsNaN)
         {
             Qx2 = glucose.Qx2() / conversion / ketone.Qx2();
             Qx = glucose.Qx() / conversion / ketone.Qx();
         }
-        catch (InvalidOperationException)
+        else
         {
             Qx2 = 0;
             Qx = 0;
@@ -80,16 +80,28 @@ public class GkiStat : IFuelStat
     }
 
     #region Report
+
     public override string ToString()
     {
         // note: divided  ticks / day  by slope, ie value/t to  get slope/day or slope / month if mul by 30
-        return
-            $"{FromDateTime.ToShortDateString()},{Name}"
-            + $",{MeanX:F2},{MinX:F2},{MaxX:F2},{Math.Sqrt(Qx2):F4},{Qx:F4},{N}" //GKI
-            + $",{GlucoseStat.MeanX():F2},{GlucoseStat.MinX:F2},{GlucoseStat.MaxX:F2},{Math.Sqrt(GlucoseStat.Qx2()):F4},{GlucoseStat.Qx():F4},{GlucoseStat.N}" // GLU
-            + $",{KetoneStat.MeanX():F2},{KetoneStat.MinX:F2},{KetoneStat.MaxX:F2},{Math.Sqrt(KetoneStat.Qx2()):F4},{KetoneStat.Qx():F4},{KetoneStat.N}" //BK
-            + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():F4}"
-            + $",{GlucoseStat.MeanX() / 18:F4}";
+        string result;
+        try
+        {
+            result = !GlucoseStat.IsNaN && !KetoneStat.IsNaN
+                ? $"{FromDateTime.ToShortDateString()},{Name}"
+                  + $",{MeanX:F2},{MinX:F2},{MaxX:F2},{Math.Sqrt(Qx2):F4},{Qx:F4},{N}" //GKI
+                  + $",{GlucoseStat.MeanX():F2},{GlucoseStat.MinX:F2},{GlucoseStat.MaxX:F2},{Math.Sqrt(GlucoseStat.Qx2()):F4},{GlucoseStat.Qx():F4},{GlucoseStat.N}" // GLU
+                  + $",{KetoneStat.MeanX():F2},{KetoneStat.MinX:F2},{KetoneStat.MaxX:F2},{Math.Sqrt(KetoneStat.Qx2()):F4},{KetoneStat.Qx():F4},{KetoneStat.N}" //BK
+                  + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():F4}"
+                  + $",{GlucoseStat.MeanX() / 18:F4}"
+                : $",{Name}, Glucose:{GlucoseStat.N}, Ketone: {KetoneStat.N}";
+        }
+        catch (Exception error)
+        {
+            result = error.GetType().ToString();
+        }
+
+        return result;
     }
 
     // Keep the Header grouped with the ToString method for ease of maintenance please
