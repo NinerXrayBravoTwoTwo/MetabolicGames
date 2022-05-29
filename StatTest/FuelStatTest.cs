@@ -37,7 +37,7 @@ public class FuelStatTest
         _testOutputHelper.WriteLine(stat.ToString());
         _testOutputHelper.WriteLine(((Statistic)stat).ToString());
 
-        Assert.False((stat.IsNaN));
+        Assert.False(stat.IsNaN);
         Assert.Equal(0, stat.MinX);
         Assert.Equal(1, stat.Correlation());
         Assert.Equal(49.5, stat.MeanX());
@@ -57,7 +57,7 @@ public class FuelStatTest
 
         Assert.False(orig.IsNaN);
 
-        var clone = new Statistic(orig);  // Base class statistic test
+        var clone = new Statistic(orig); // Base class statistic test
 
         Assert.False(clone.IsNaN);
 
@@ -101,4 +101,3 @@ public class FuelStatTest
         Assert.Equal(clone.N + 1, orig.N);
     }
 }
-

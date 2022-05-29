@@ -1,11 +1,11 @@
-﻿using MetabolicStat;
+﻿using System.Text.RegularExpressions;
+using MetabolicStat;
 using MetabolicStat.FuelStatistics;
-
-using System.Text.RegularExpressions;
 
 FuelStat[] Interpolate(FuelStat[] inputSet)
 {
-    #region  Interpolation 
+    #region Interpolation
+
     IEnumerable<FuelStat> InterpolateListFuelStats(IEnumerable<FuelStat> statsToCheckForNan)
     {
         // This interpolation method depends on the list being in order otherwise the math is pointless
@@ -68,6 +68,7 @@ FuelStat[] Interpolate(FuelStat[] inputSet)
 
     return inputSet;
 }
+
 FuelStat[] InterpolateReport(FuelStat[] inputSet, string tag)
 {
     if (inputSet.Length == 0) return inputSet;
@@ -81,14 +82,16 @@ FuelStat[] InterpolateReport(FuelStat[] inputSet, string tag)
         if (nanCount <= 0) continue;
 
         Console.WriteLine($"{tag}: {nanCount} NaN before interpolation pass: '{limit}'");
-        resultSet = Interpolate(inputSet: resultSet);
+        resultSet = Interpolate(resultSet);
     }
 
     return resultSet;
 }
+
 #endregion
 
 #region Get the program arguments and read the data
+
 IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
 {
     IEnumerable<FuelStat>? resultFuelStats = null;
@@ -102,6 +105,7 @@ IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
     {
         Console.WriteLine(error.Message);
     }
+
     return resultFuelStats?.ToArray();
 }
 
@@ -123,6 +127,7 @@ if (match.Success == false || fileName.Equals(string.Empty))
     Console.WriteLine($"{args[1]} is not a valid file");
     return;
 }
+
 #endregion
 
 /* ****************** */
@@ -139,10 +144,14 @@ if (match.Success == false || fileName.Equals(string.Empty))
 // Write the three report stats GKI, Cgm/Bg, Bk for each bucket-day size.
 
 foreach (var bucketDays in
-         new[] { 0.240378875, 0.48075775, 0.9615155, 1.9023031, 3.80460625, 7.6092125, 15.218425, 30.43685, 60.8737, 91.31055 })
+         new[]
+         {
+             0.240378875, 0.48075775, 0.9615155, 1.9023031, 3.80460625, 7.6092125, 15.218425, 30.43685, 60.8737,
+             91.31055
+         })
 {
     var fuelStats = ReadDataFromFile(fileName, bucketDays);
-    Console.WriteLine( $"Creating tables for '{bucketDays}' days.");
+    Console.WriteLine($"Creating tables for '{bucketDays}' days.");
     // Root of Reporting
     if (fuelStats != null)
     {
@@ -198,32 +207,35 @@ foreach (var bucketDays in
         //// TODO: Are there cases where a bucket does not exist for the CGM range?  Do I care? so far no data is invented to fill in gaps.
         //var lastDate = DateTime.MinValue;
 
-        #region interpolate 
+        #region interpolate
+
         var bkStats = InterpolateReport(
             bkList2
-            .Select(item => new FuelStat(item))
-            .OrderBy(x => x.FromDateTime)
-            .ToArray()
+                .Select(item => new FuelStat(item))
+                .OrderBy(x => x.FromDateTime)
+                .ToArray()
             , "BK");
 
         // Interpolate MGS list
         var mgStats = InterpolateReport(
-                mgListPlus
-                    .Select(item => new FuelStat(item))
-                    .OrderBy(x => x.FromDateTime)
-                    .ToArray()
-                , "GLU");
+            mgListPlus
+                .Select(item => new FuelStat(item))
+                .OrderBy(x => x.FromDateTime)
+                .ToArray()
+            , "GLU");
+
         #endregion
 
         // Calculate GKI stats
         var gkiList = (from bkStat in bkStats
                     .Where(x => x.Name.StartsWith("BK-"))
-                       let nameSplit = bkStat.Name.Split('-')
-                       let target = "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}"  // BUG what if there is just a CGM for this bucket?
-                       let glStat = mgStats.FirstOrDefault(x => x.Name.Equals(target))
-                       where glStat != null
-                       let name = "GKI-" + $"{nameSplit[1]}-{nameSplit[2]}"
-                       select new GkiStat(glStat, bkStat, name))
+                let nameSplit = bkStat.Name.Split('-')
+                let target =
+                    "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}" // BUG what if there is just a CGM for this bucket?
+                let glStat = mgStats.FirstOrDefault(x => x.Name.Equals(target))
+                where glStat != null
+                let name = "GKI-" + $"{nameSplit[1]}-{nameSplit[2]}"
+                select new GkiStat(glStat, bkStat, name))
             .ToList(); // TODO: Is Glucose in mg OR mmol.  Some partial work has been done
 
         // Write Reports

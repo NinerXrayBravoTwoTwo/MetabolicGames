@@ -5,7 +5,8 @@ namespace MetabolicStat;
 
 internal static class ReportWriter
 {
-    public static void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable<FuelStat> mgStats1, FuelStat[] bkStats1, List<GkiStat> list)
+    public static void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable<FuelStat> mgStats1,
+        FuelStat[] bkStats1, List<GkiStat> list)
     {
         string ReportTitleBuilder(string reportName, int samples, double dayInterval, TimeSpan timeSpan)
         {
@@ -36,10 +37,10 @@ internal static class ReportWriter
             var report = new List<string>
             {
                 ReportTitleBuilder("BK", samples, interval, sum.TimeSpan) // TITLE
-                , FuelStat.Footer( statOfStats)
-                , FuelStat.Header
-                , string.Join("\r\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString()))
-                , FuelStat.Footer( statOfStats)
+                ,
+                FuelStat.Footer(statOfStats), FuelStat.Header,
+                string.Join("\r\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString())),
+                FuelStat.Footer(statOfStats)
             };
             File.WriteAllLines($"{writeFolderName}\\BK-{interval:N2}-days.csv", report.ToArray());
         }
@@ -63,7 +64,8 @@ internal static class ReportWriter
             var report = new List<string>
             {
                 ReportTitleBuilder("GKI", (int)ketoN, interval, gkiSpan) // TITLE
-                , GkiStat.Header, string.Join("\r\n", gkiStats.Select(x => x.ToString()))
+                ,
+                GkiStat.Header, string.Join("\r\n", gkiStats.Select(x => x.ToString()))
             };
 
             File.WriteAllLines($"{writeFolderName}\\GKI-{interval:N2}-days.csv", report.ToArray());
@@ -88,15 +90,15 @@ internal static class ReportWriter
                 statOfstats.Add(item.MeanX(), item.MeanY() * TimeSpan.TicksPerDay);
             }
 
-            var timeSpan = new TimeSpan((long)statOfglucose.MaxY*TimeSpan.TicksPerDay - (long)statOfglucose.MinY*TimeSpan.TicksPerDay);
+            var timeSpan = new TimeSpan((long)statOfglucose.MaxY * TimeSpan.TicksPerDay -
+                                        (long)statOfglucose.MinY * TimeSpan.TicksPerDay);
 
             var report = new List<string>
             {
-                 FuelStat.Footer(statOfstats)
-                , ReportTitleBuilder("BG & CGM", (int)enumerable.Sum(stat => stat.N), interval, timeSpan) // TITLE
-                , FuelStat.Header
-                , string.Join("\r\n", enumerable.Select(x => x.ToString()))
-                , FuelStat.Footer( statOfstats)
+                FuelStat.Footer(statOfstats),
+                ReportTitleBuilder("BG & CGM", (int)enumerable.Sum(stat => stat.N), interval, timeSpan) // TITLE
+                ,
+                FuelStat.Header, string.Join("\r\n", enumerable.Select(x => x.ToString())), FuelStat.Footer(statOfstats)
             };
 
             File.WriteAllLines($"{writeFolderName}\\CGM-{interval:N2}-days.csv", report.ToArray());
@@ -110,5 +112,4 @@ internal static class ReportWriter
             GlucoseReport(mgStats1, folderName, bucketDays);
         }
     }
-
 }

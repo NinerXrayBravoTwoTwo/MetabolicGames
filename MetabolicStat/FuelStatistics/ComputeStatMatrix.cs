@@ -54,10 +54,12 @@ public class ComputeStatMatrix
             lineNumber++;
 
             #region sequence check
+
             if (sequenceCheck > item.Date.Ticks)
                 throw new DataException($"Out of sequence error: Line: {lineNumber}.");
 
             sequenceCheck = item.Date.Ticks;
+
             #endregion
 
             // bucket interval is from (inclusive) -> to (exclusive) to avoid same data in two buckets
@@ -82,11 +84,17 @@ public class ComputeStatMatrix
             string targetBucket;
 
             if (Regex.IsMatch(item.Source, @"^Gluco"))
+            {
                 targetBucket = item.Value < 35 ? "CGM_err" : $"CGM-{bucketRange}";
+            }
             else if (Regex.IsMatch(item.Source, @"^BloodGluco"))
+            {
                 targetBucket = item.Value is < 300 and >= 35 ? $"BG-{bucketRange}" : "BG_err";
+            }
             else if (Regex.IsMatch(item.Source, @"^BloodKetone"))
+            {
                 targetBucket = $"BK-{bucketRange}";
+            }
             else
             {
                 Console.WriteLine($"Skipped item: {item}");
@@ -109,10 +117,11 @@ public class ComputeStatMatrix
             minDate = Math.Min(item.Date.Ticks, minDate);
             maxDate = Math.Max(item.Date.Ticks, maxDate);
         }
+
         counter++;
 
-        count =  counter;
-        timeSpan =  TimeSpan.FromTicks(maxDate - minDate);
+        count = counter;
+        timeSpan = TimeSpan.FromTicks(maxDate - minDate);
 
         return fuelStatList;
     }
@@ -141,7 +150,7 @@ public class ComputeStatMatrix
             var value = double.Parse(sourceString.Groups[2].Value);
             var source = sourceString.Groups[1].Value;
 
-           // Console.WriteLine($"{date}\t{source}\t{value}");
+            // Console.WriteLine($"{date}\t{source}\t{value}");
 
             result.Add(new DataPoint(date, source, value));
         }
@@ -157,9 +166,9 @@ public class ComputeStatMatrix
             Value = value;
             Source = source;
         }
+
         public DateTime Date { get; }
         public string Source { get; }
         public double Value { get; }
     }
-
 }

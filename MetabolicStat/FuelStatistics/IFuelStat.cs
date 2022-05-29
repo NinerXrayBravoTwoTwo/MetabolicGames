@@ -2,8 +2,20 @@
 
 public interface IFuelStat
 {
+    /// <summary>
+    ///     Statistic bucket name
+    /// </summary>
     string Name { get; set; }
+
+    /// <summary>
+    ///     A string representing from date through to date in "yyyy/mm/dd-yyyy-mm/dd"
+    ///     This can be changed to any unique name model
+    /// </summary>
     string DateRange { get; }
+
+    /// <summary>
+    ///     A .Net timespan value containing the interval length of this bucket
+    /// </summary>
     TimeSpan TimeSpan { get; }
 
     /// <summary>
@@ -31,21 +43,30 @@ public interface IFuelStat
     /// </summary>
     double MinY { get; set; }
 
+    /// <summary>
+    ///     To date value. Should be the value of MaxY * ticksPerDay
+    /// </summary>
     DateTime ToDateTime { get; }
 
+    /// <summary>
+    ///     From date value.  Should be the value of MinY * ticksPerDay
+    /// </summary>
     DateTime FromDateTime { get; }
+
+    /// <summary>
+    ///     Tests if there are enough samples for a valid linear regression
+    /// </summary>
     bool IsNaN { get; }
 
     /// <summary>
     ///     mean x = sum(x) / n
     /// </summary>
     /// <returns>Mean of x</returns>
-     double MeanX();
+    double MeanX();
 
     /// <summary>
     ///     mean y = sum(y) / n
     /// </summary>
     /// <returns>Mean of y</returns>
-     double MeanY();
-    
+    double MeanY();
 }

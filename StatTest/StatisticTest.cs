@@ -90,12 +90,12 @@ public class StatisticTest
         Assert.False(clone.IsNaN);
 
         // test - 
-        clone.Add(orig);  // Adding the original statistic to its clone, 
-                          // a> should only effect the clone.
-                          // b> number of samples should double
-                          // c> variance should remain the same 
-                          // d> other sum attributes should all be doubled.
-                          // e> Mean should remain the same.
+        clone.Add(orig); // Adding the original statistic to its clone, 
+        // a> should only effect the clone.
+        // b> number of samples should double
+        // c> variance should remain the same 
+        // d> other sum attributes should all be doubled.
+        // e> Mean should remain the same.
 
         Assert.Equal(orig.N * 2, clone.N);
         Assert.Equal(orig.Qx2(), clone.Qx2());

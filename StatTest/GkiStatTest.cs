@@ -1,6 +1,5 @@
-using MetabolicStat.FuelStatistics;
 using System;
-using MetabolicStat.StatMath;
+using MetabolicStat.FuelStatistics;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -35,7 +34,7 @@ public class GkiStatTest
     {
         var dateBase = DateTime.Now;
 
-        var glumg = RandomGlucose(dateBase, out FuelStat glummol);
+        var glumg = RandomGlucose(dateBase, out var glummol);
         _testOutputHelper.WriteLine(glumg.ToString());
         _testOutputHelper.WriteLine(glummol.ToString());
 
@@ -62,7 +61,7 @@ public class GkiStatTest
         //Assert.Equal(49.5, stat.MeanX());
         //Assert.Equal(1, stat.Slope());
     }
-    
+
     private static FuelStat RandomGlucose(DateTime dateBase, out FuelStat gluMmol)
     {
         var glu = new FuelStat("glu-mg ");
@@ -110,4 +109,3 @@ public class GkiStatTest
         return ketone;
     }
 }
-

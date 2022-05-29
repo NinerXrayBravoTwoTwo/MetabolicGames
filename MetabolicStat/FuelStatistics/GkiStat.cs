@@ -4,10 +4,6 @@ namespace MetabolicStat.FuelStatistics;
 
 public class GkiStat : IFuelStat
 {
-
-    // save mmol switch for other future calculations
-    public bool IsGlucoseMmol { get; set; }
-
     public GkiStat(Statistic glucose, Statistic ketone, string name, bool useGlucoseMmol = false)
     {
         IsGlucoseMmol = useGlucoseMmol;
@@ -48,6 +44,9 @@ public class GkiStat : IFuelStat
         GlucoseStat = glucose;
     }
 
+    // save mmol switch for other future calculations
+    public bool IsGlucoseMmol { get; set; }
+
     public double Qx { get; set; }
     public double Qx2 { get; }
     public Statistic KetoneStat { get; internal set; }
@@ -62,18 +61,22 @@ public class GkiStat : IFuelStat
     public string Name { get; set; }
     public string DateRange => $"{FromDateTime} -- {ToDateTime}";
     public TimeSpan TimeSpan => ToDateTime - FromDateTime;
+
     /// <summary>
     ///     Total The number of total glucose samples divided by the number of ketone samples ... debate please
     /// </summary>
     public double N => KetoneStat.N;
+
     public double MaxX { get; set; } // max value
     public double MinX { get; set; } // min value
     public double MaxY { get; set; } // end date
     public double MinY { get; set; } // start date
+
     double IFuelStat.MeanX()
     {
         return MeanX;
     }
+
     double IFuelStat.MeanY()
     {
         return MeanY;
@@ -110,8 +113,7 @@ public class GkiStat : IFuelStat
                                    + ",MeanXglu,MinXglu,MaxXglu,Sqrt(Qx2)glu,QxGlu,Nglu"
                                    + ",MeanXbk,MinXbk,MaxXbk,sqrt(Qx2)bk,QxBk,Nbk"
                                    + ",QxGlu/QxBk"
-                                   + ",Glu/18"
-                                   ;
+                                   + ",Glu/18";
 
     #endregion
 }

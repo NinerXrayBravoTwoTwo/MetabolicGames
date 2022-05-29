@@ -37,12 +37,9 @@ public class FuelStat : Statistic, IFuelStat
         get => InterpolatedCount > 0;
     }
 
-    public string Name { get; set; }
+    public static string Header => "index,Interpolations,name,meanX,minX,maxX,Qx,Qy,slope,Qx2,sqrt(Qx2),N";
 
-    public new void Add(double x, double y)
-    {
-        base.Add(x, y / TimeSpan.TicksPerDay);
-    }
+    public string Name { get; set; }
 
     public DateTime FromDateTime => new((long)MinY * TimeSpan.TicksPerDay);
 
@@ -51,6 +48,11 @@ public class FuelStat : Statistic, IFuelStat
     public string DateRange => $"{FromDateTime} -- {ToDateTime}";
 
     public TimeSpan TimeSpan => ToDateTime - FromDateTime;
+
+    public new void Add(double x, double y)
+    {
+        base.Add(x, y / TimeSpan.TicksPerDay);
+    }
 
     public new string ToString()
     {
@@ -70,13 +72,12 @@ public class FuelStat : Statistic, IFuelStat
         return result;
     }
 
-    public static string Header => "index,Interpolations,name,meanX,minX,maxX,Qx,Qy,slope,Qx2,sqrt(Qx2),N";
-
     public static string Footer(Statistic stat)
     {
         //var midBucket = new DateTime((long)stat.MeanY() );
         var minDate = new DateTime((long)stat.MinY);
         var maxDate = new DateTime((long)stat.MaxY);
-        return $",,{minDate.ToShortDateString()}-{maxDate.ToShortDateString()},{stat.MeanX():F2},{stat.MinX:F3},{stat.MaxX:F3},{stat.Qx():F3},,,{stat.Qx2():F3},{Math.Sqrt(stat.Qx2()):F3},{stat.N:N1}";
+        return
+            $",,{minDate.ToShortDateString()}-{maxDate.ToShortDateString()},{stat.MeanX():F2},{stat.MinX:F3},{stat.MaxX:F3},{stat.Qx():F3},,,{stat.Qx2():F3},{Math.Sqrt(stat.Qx2()):F3},{stat.N:N1}";
     }
 }
