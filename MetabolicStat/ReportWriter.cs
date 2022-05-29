@@ -1,6 +1,5 @@
 ﻿using MetabolicStat.FuelStatistics;
 using MetabolicStat.StatMath;
-//#pragma warning disable CS8604
 
 namespace MetabolicStat;
 

@@ -30,14 +30,15 @@ public class GkiStat : IFuelStat
 
         // Wild guess at variance, I believe this is incorrect
 
-        Qx2 = glucose.Qx2() / conversion / ketone.Qx2();
 
         try
         {
+            Qx2 = glucose.Qx2() / conversion / ketone.Qx2();
             Qx = glucose.Qx() / conversion / ketone.Qx();
         }
         catch (InvalidOperationException)
         {
+            Qx2 = 0;
             Qx = 0;
         }
 

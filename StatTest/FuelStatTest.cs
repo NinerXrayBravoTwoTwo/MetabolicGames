@@ -47,6 +47,7 @@ public class FuelStatTest
     [Fact]
     public void FuelStatClone()
     {
+        // TESTING BASE CLASS CLONING
         var orig = new FuelStat("Alpha");
         double x = 0, y = -1;
 
@@ -56,7 +57,7 @@ public class FuelStatTest
 
         Assert.False(orig.IsNaN);
 
-        var clone = new Statistic(orig);
+        var clone = new Statistic(orig);  // Base class statistic test
 
         Assert.False(clone.IsNaN);
 
@@ -73,21 +74,21 @@ public class FuelStatTest
     [Fact]
     public void FuelStatCloneBetter()
     {
+        // TESTING Inheritance level cloning , they look similar but are different.
         var orig = new FuelStat("Delta");
         double x = 0, y = -1;
 
-        while (x < 100)
-            orig.Add(x++, y++);
+        while (x < 100) orig.Add(x++, y++);
 
         _testOutputHelper.WriteLine(orig.ToString());
 
         Assert.False(orig.IsNaN);
 
-        var clone = new FuelStat(orig);
+        var clone = new FuelStat(orig); // FuelStat vs Statistic
 
         Assert.False(clone.IsNaN);
 
-        Assert.Equal(orig.Name, clone.Name);
+        Assert.Equal(orig.Name, clone.Name); // Key test difference
 
         Assert.Equal(orig.ToString(), clone.ToString());
 
