@@ -72,3 +72,30 @@ date|name|meanx|minx|maxx|sdx|slope|N
 3/2/2022|MGL-3/2/2022-5/2/2022|79.11|35|169|0.1625|-.0|4916
 
 # Usage
+
+(under construction)
+
+This current version writes the statistics *.csv files to the same folder/directory where the data file resids.
+
+I am using it this way:
+
+Command line, bashsh, sh, or powershell
+
+Create a folder easy to access such as c://MetabolicData/
+create a repo clone of this source and do a 
+
+git pull repo 
+
+Use a version of visual studio to build the exe file.
+
+Go to your targe folder where you build the software and run the executable against the target data base file.
+
+The *.csv files will be created alongside that data file.
+
+The report printed on the console is a trace of the programs effort to generate the different *.csv tables.
+
+After the *.csv files are created they can be imported into excel or other post process to visualize the data.
+
+
+
+
