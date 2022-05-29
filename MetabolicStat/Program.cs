@@ -42,7 +42,7 @@ FuelStat[] Interpolate(FuelStat[] inputSet)
                     };
 
                     interpolated.Add(interpFuelStat);
-                    Console.WriteLine($"bucket interpolation for: '{interpolateMe[i].Name} N={interpolateMe[i].N}'");
+                    //Console.WriteLine($"bucket interpolation for: '{interpolateMe[i].Name} N={interpolateMe[i].N}'");
                 }
             }
             else
@@ -68,7 +68,7 @@ FuelStat[] Interpolate(FuelStat[] inputSet)
 
     return inputSet;
 }
-FuelStat[] InterpolateReport(FuelStat[] inputSet)
+FuelStat[] InterpolateReport(FuelStat[] inputSet, string tag)
 {
     if (inputSet.Length == 0) return inputSet;
 
@@ -80,7 +80,7 @@ FuelStat[] InterpolateReport(FuelStat[] inputSet)
         var nanCount = resultSet.Count(x => x.IsNaN);
         if (nanCount <= 0) continue;
 
-        Console.WriteLine($"{nanCount} NaN before interpolation pass: '{limit}'");
+        Console.WriteLine($"{tag}: {nanCount} NaN before interpolation pass: '{limit}'");
         resultSet = Interpolate(inputSet: resultSet);
     }
 
@@ -96,7 +96,7 @@ IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
     {
         var statMatrix = new ComputeStatMatrix(fileName);
         resultFuelStats = statMatrix.Run(bucketDays, out var count, out var timeSpan).ToList();
-        Console.WriteLine($"{count} values spanning {timeSpan} days\n");
+        // Console.WriteLine($"{count} values spanning {timeSpan} days\n");
     }
     catch (Exception error)
     {
@@ -142,7 +142,7 @@ foreach (var bucketDays in
          new[] { 0.240378875, 0.48075775, 0.9615155, 1.9023031, 3.80460625, 7.6092125, 15.218425, 30.43685, 60.8737, 91.31055 })
 {
     var fuelStats = ReadDataFromFile(fileName, bucketDays);
-
+    Console.WriteLine( $"Creating tables for '{bucketDays}' days.");
     // Root of Reporting
     if (fuelStats != null)
     {
@@ -204,7 +204,7 @@ foreach (var bucketDays in
             .Select(item => new FuelStat(item))
             .OrderBy(x => x.FromDateTime)
             .ToArray()
-            );
+            , "BK");
 
         // Interpolate MGS list
         var mgStats = InterpolateReport(
@@ -212,7 +212,7 @@ foreach (var bucketDays in
                     .Select(item => new FuelStat(item))
                     .OrderBy(x => x.FromDateTime)
                     .ToArray()
-                );
+                , "GLU");
         #endregion
 
         // Calculate GKI stats
