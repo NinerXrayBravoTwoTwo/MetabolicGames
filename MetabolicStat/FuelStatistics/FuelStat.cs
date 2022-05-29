@@ -72,7 +72,7 @@ public class FuelStat : Statistic, IFuelStat
 
     public static string Header => "index,Interpolations,name,meanX,minX,maxX,Qx,Qy,slope,Qx2,sqrt(Qx2),N";
 
-    public static string Footer(int startRow, Statistic stat)
+    public static string Footer(Statistic stat)
     {
         //var midBucket = new DateTime((long)stat.MeanY() );
         var minDate = new DateTime((long)stat.MinY);

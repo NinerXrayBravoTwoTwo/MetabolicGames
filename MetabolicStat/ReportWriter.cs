@@ -1,5 +1,6 @@
 ﻿using MetabolicStat.FuelStatistics;
 using MetabolicStat.StatMath;
+//#pragma warning disable CS8604
 
 namespace MetabolicStat;
 
@@ -7,10 +8,10 @@ internal static class ReportWriter
 {
     public static void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable<FuelStat> mgStats1, FuelStat[] bkStats1, List<GkiStat> list)
     {
-        string ReportTitleBuilder(string reportName, string samples, double dayInterval, TimeSpan timeSpan)
+        string ReportTitleBuilder(string reportName, int samples, double dayInterval, TimeSpan timeSpan)
         {
             var reportTitle =
-                $"Title:, {reportName}- {dayInterval:N2} day interval with {samples} samples in {timeSpan.Days} days";
+                $"Title:, {reportName}- {dayInterval:F2} day interval with {samples} samples in {timeSpan.Days} days";
             return reportTitle;
         }
 
@@ -35,11 +36,11 @@ internal static class ReportWriter
 
             var report = new List<string>
             {
-                ReportTitleBuilder("BK", samples.ToString(), interval, sum.TimeSpan) // TITLE
-                , FuelStat.Footer(4, statOfStats)
+                ReportTitleBuilder("BK", samples, interval, sum.TimeSpan) // TITLE
+                , FuelStat.Footer( statOfStats)
                 , FuelStat.Header
                 , string.Join("\r\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString()))
-                , FuelStat.Footer(4, statOfStats)
+                , FuelStat.Footer( statOfStats)
             };
             File.WriteAllLines($"{writeFolderName}\\BK-{interval:N2}-days.csv", report.ToArray());
         }
@@ -62,7 +63,7 @@ internal static class ReportWriter
             var gkiSpan = new TimeSpan(maxt - mint);
             var report = new List<string>
             {
-                ReportTitleBuilder("GKI", $"{ketoN}", interval, gkiSpan) // TITLE
+                ReportTitleBuilder("GKI", (int)ketoN, interval, gkiSpan) // TITLE
                 , GkiStat.Header, string.Join("\r\n", gkiStats.Select(x => x.ToString()))
             };
 
@@ -76,35 +77,28 @@ internal static class ReportWriter
 
             var listGlucose = mgList.OrderBy(x => x.FromDateTime).ToArray();
 
-            var glucose = listGlucose as FuelStat?[];
-            var enumerable = listGlucose as FuelStat?[];
+            //var glucose = listGlucose;
+            var enumerable = listGlucose;
 
-#pragma warning disable CS8602
-            // This data should has been through an invalid data interpolation before this point if there are still null values I need it to fail here
-            var mint = DateTime.MaxValue.Ticks;
-            var maxt = DateTime.MinValue.Ticks;
+            var statOfstats = new Statistic();
+            var statOfglucose = new Statistic();
 
-            foreach (var item in glucose)
+            foreach (var item in enumerable)
             {
-                mint = Math.Min(mint, item.FromDateTime.Ticks);
-                maxt = Math.Max(maxt, item.ToDateTime.Ticks);
+                statOfglucose.Add(item);
+                statOfstats.Add(item.MeanX(), item.MeanY() * TimeSpan.TicksPerDay);
             }
 
-            var timeSpan = new TimeSpan(maxt - mint);
-
-            var samples = $"{enumerable.Sum(stat => stat.N):N}";
-#pragma warning restore CS8602
+            var timeSpan = new TimeSpan((long)statOfglucose.MaxY*TimeSpan.TicksPerDay - (long)statOfglucose.MinY*TimeSpan.TicksPerDay);
 
             var report = new List<string>
             {
-                ReportTitleBuilder("BG & CGM", samples, interval, timeSpan) // TITLE
+                 FuelStat.Footer(statOfstats)
+                , ReportTitleBuilder("BG & CGM", (int)enumerable.Sum(stat => stat.N), interval, timeSpan) // TITLE
                 , FuelStat.Header
+                , string.Join("\r\n", enumerable.Select(x => x.ToString()))
+                , FuelStat.Footer( statOfstats)
             };
-
-#pragma warning disable CS8602
-            // Missing report data will be glaringly obvious to the user, no check necessary it can not be recovered from here
-            report.AddRange(enumerable.Select(x => x.ToString()));
-#pragma warning restore CS8602
 
             File.WriteAllLines($"{writeFolderName}\\CGM-{interval:N2}-days.csv", report.ToArray());
         }

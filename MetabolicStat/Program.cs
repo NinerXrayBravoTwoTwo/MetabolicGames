@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 FuelStat[] Interpolate(FuelStat[] inputSet)
 {
+    #region  Interpolation 
     IEnumerable<FuelStat> InterpolateListFuelStats(IEnumerable<FuelStat> statsToCheckForNan)
     {
         // This interpolation method depends on the list being in order otherwise the math is pointless
@@ -85,14 +86,16 @@ FuelStat[] InterpolateReport(FuelStat[] inputSet)
 
     return resultSet;
 }
+#endregion
 
+#region Get the program arguments and read the data
 IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
 {
     IEnumerable<FuelStat>? resultFuelStats = null;
     try
     {
         var statMatrix = new ComputeStatMatrix(fileName);
-        resultFuelStats = statMatrix.Run(bucketDays, out int count, out TimeSpan timeSpan).ToList();
+        resultFuelStats = statMatrix.Run(bucketDays, out var count, out var timeSpan).ToList();
         Console.WriteLine($"{count} values spanning {timeSpan} days\n");
     }
     catch (Exception error)
@@ -102,7 +105,6 @@ IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
     return resultFuelStats?.ToArray();
 }
 
-#region Get the program arguments and read the data
 var argString = string.Join(" ", args);
 
 if (argString.Length == 0)
