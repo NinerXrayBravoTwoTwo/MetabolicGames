@@ -30,13 +30,6 @@ public class ComputeStatMatrix
 
     public IEnumerable<FuelStat> Run(double bucketDays, out int count, out TimeSpan timeSpan)
     {
-        //if (_runOnceIsPlenty.Count() > 1000 )
-        //{
-        //    count = _countOnce;
-        //    timeSpan = _intervalOnce;
-        //    return _runOnceIsPlenty;
-        //}
-
         var counter = 0;
         var lineNumber = 0;
 
@@ -116,9 +109,9 @@ public class ComputeStatMatrix
 
             minDate = Math.Min(item.Date.Ticks, minDate);
             maxDate = Math.Max(item.Date.Ticks, maxDate);
-        }
 
-        counter++;
+            counter++;
+        }
 
         count = counter;
         timeSpan = TimeSpan.FromTicks(maxDate - minDate);

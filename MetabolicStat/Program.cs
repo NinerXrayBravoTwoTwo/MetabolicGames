@@ -99,7 +99,7 @@ IEnumerable<FuelStat>? ReadDataFromFile(string fileName, double bucketDays)
     {
         var statMatrix = new ComputeStatMatrix(fileName);
         resultFuelStats = statMatrix.Run(bucketDays, out var count, out var timeSpan).ToList();
-        // Console.WriteLine($"{count} values spanning {timeSpan} days\n");
+        Console.WriteLine($"\n{count} values spanning {timeSpan} days");
     }
     catch (Exception error)
     {
@@ -188,6 +188,7 @@ foreach (var bucketDays in
         var mgListPlus = new List<FuelStat>(mgList2);
 
         // Are there cases where there are no CGM buckets for corresponding BG buckets ?
+        var countOfMissingCgmBucketsThatHaveBgValues = 0;
         foreach (var bgStat in bgList2.Where(x => x.Name.StartsWith("BG-")).ToArray())
         {
             var nameSplit = bgStat.Name.Split('-');
@@ -198,14 +199,17 @@ foreach (var bucketDays in
 
             if (cgmStat == null)
             {
-                Console.WriteLine(
-                    $"Missing cgm bucket: {target} using => {bgStat.Name} with only BG data, N={bgStat.N}");
+                countOfMissingCgmBucketsThatHaveBgValues++;
+                //Console.WriteLine($"Missing cgm bucket: {target} using => {bgStat.Name} with only BG data, N={bgStat.N}");
+
                 mgListPlus.Add(bgStat); // mglist will now require sorting before reporting
             }
         }
+        if (countOfMissingCgmBucketsThatHaveBgValues > 0)
+            Console.WriteLine($"{countOfMissingCgmBucketsThatHaveBgValues} missing CGM buckets, using existing BG buckets in those time intervals instead.");
 
-        //// TODO: Are there cases where a bucket does not exist for the CGM range?  Do I care? so far no data is invented to fill in gaps.
-        //var lastDate = DateTime.MinValue;
+        // TODO: Are there cases where a bucket does not exist for the CGM range?  Do I care? so far no data is invented to fill in gaps.
+        // TODO: How would it improve the analysis by creating wholly interpolated bucet?
 
         #region interpolate
 
@@ -229,13 +233,13 @@ foreach (var bucketDays in
         // Calculate GKI stats
         var gkiList = (from bkStat in bkStats
                     .Where(x => x.Name.StartsWith("BK-"))
-                let nameSplit = bkStat.Name.Split('-')
-                let target =
-                    "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}" // BUG what if there is just a CGM for this bucket?
-                let glStat = mgStats.FirstOrDefault(x => x.Name.Equals(target))
-                where glStat != null
-                let name = "GKI-" + $"{nameSplit[1]}-{nameSplit[2]}"
-                select new GkiStat(glStat, bkStat, name))
+                       let nameSplit = bkStat.Name.Split('-')
+                       let target =
+                           "MGL-" + $"{nameSplit[1]}-{nameSplit[2]}" // BUG what if there is just a CGM for this bucket?
+                       let glStat = mgStats.FirstOrDefault(x => x.Name.Equals(target))
+                       where glStat != null
+                       let name = "GKI-" + $"{nameSplit[1]}-{nameSplit[2]}"
+                       select new GkiStat(glStat, bkStat, name))
             .ToList(); // TODO: Is Glucose in mg OR mmol.  Some partial work has been done
 
         // Write Reports
@@ -245,12 +249,11 @@ foreach (var bucketDays in
     }
 }
 
-// Find this BK, It is a test case with 0 value BK that caused div by zero error, expected
-//8/1/2021,BK-8/1/2021-8/31/2021, 1.27, 0.1, 4.6, 0.1618, -1.32443, 41
-//// Because it tests the divide by zero in GKI calculation 
+/*
+Find this BK, It is a test case with 0 value BK that caused div by zero error, expected
+8/1/2021, BK-8/1/2021-8/31/2021, 1.27, 0.1, 4.6, 0.1618, -1.32443, 41
+ Because it tests the divide by zero in GKI calculation
 
-////var bkStats = fuelStats.Where(x => x.Name.Contains("BK-") && x.MinX.Equals(0));
-////Console.WriteLine(string.Join('\n', bkStats.Select(x => x.ToString())));
-
-// Suspend the screen.  
-//Console.ReadLine();
+var bkStats = fuelStats.Where(x => x.Name.Contains("BK-") && x.MinX.Equals(0));
+Console.WriteLine(string.Join('\n', bkStats.Select(x => x.ToString())));
+*/
