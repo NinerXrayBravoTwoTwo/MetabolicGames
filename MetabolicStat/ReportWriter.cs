@@ -51,7 +51,7 @@ internal static class ReportWriter
         {
             // Write GKI report
             var ketoN = gkiStats.Sum(x => x.N);
-            // var gluN = gkiStats.Sum(x => x.Ng); // TODO: GKI samples are actually a set of BK BG and CGM ... BK or BG is not accurate estimate of the number of samples ...
+            // var gluN = gkiStats.Sum(x => x.Ng);
 
             var mint = DateTime.MaxValue.Ticks;
             var maxt = DateTime.MinValue.Ticks;
