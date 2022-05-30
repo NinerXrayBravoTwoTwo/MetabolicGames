@@ -5,6 +5,8 @@ namespace MetabolicStat;
 
 internal static class ReportWriter
 {
+
+    // TODO:  Need to add report summaries from three reports.Need to complete report summary for GKI report
     public static void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable<FuelStat> mgStats1,
         FuelStat[] bkStats1, List<GkiStat> list)
     {
