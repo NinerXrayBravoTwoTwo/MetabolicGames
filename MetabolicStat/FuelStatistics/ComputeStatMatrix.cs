@@ -10,7 +10,6 @@ public class ComputeStatMatrix
 {
     private DateTime _dateBreaker;
 
-
     public ComputeStatMatrix(string fileName)
     {
         FileName = fileName;
@@ -18,12 +17,17 @@ public class ComputeStatMatrix
         // Kick off date, algorithm syncs with year fraction boundary's at base 12 of year
         // This guarantees that quarters line up with year boundaries for every data set.
         // This ONLY WORKS IF BASE 12 fractions of a year are used for bucket sizes.
-        // For example to divide a year up into weeks 3
-        // when year fractions or multiples are chosen for bucket-breaker
-
+        // For example to divide a year into quarters, 1 year = 365.2422 days / 12 months = 30.437 days per month
+        // My objective is to create buckets of consistent timespan.  By this logic a quarter is 91.311 days
+        // NOTE: there is nothing to stop you from using whatever arbitrary time division you like just be careful that you don't
+        // inadvertently eliminate data from the edges of your arbitrary buckets. To most people reading your reports a quarter of 91.3 days looks no
+        // different than a quarter of 90 days.  
+        // Caveat: 91.311 days / quarter however will spatially spread the time graphing out correctly when it is charted with a spreadsheet such as excel.
+        
         _dateBreaker =
             DateTime.Parse(
-                @"01-01-2015 00:00 -0800"); // begin of first year. IFF datebreaker increment is set to a base 12 fraction of a year your buckets will align on year/month bountriess
+                @"01-01-2015 00:00 -0800"); // begin of first year. IFF datebreaker increment is set to a base 12 fraction of a year
+                                            // your buckets will align on year/month boundaries
     }
 
     public string FileName { get; internal set; }
@@ -91,11 +95,8 @@ public class ComputeStatMatrix
             else
             {
                 Console.WriteLine($"Skipped item: {item}");
-                continue; // data row is ignored
+                continue; // data row is ignored 
             }
-
-            //if (item.Value <= 0)
-            //    item.Value = 0.08; // Neither Glucose or ketone values can be negative. Zero is not possible either.
 
             if (fuelStatList.Find(x => x.Name.Equals(targetBucket)) == null)
             {
@@ -143,11 +144,8 @@ public class ComputeStatMatrix
             var value = double.Parse(sourceString.Groups[2].Value);
             var source = sourceString.Groups[1].Value;
 
-            // Console.WriteLine($"{date}\t{source}\t{value}");
-
             result.Add(new DataPoint(date, source, value));
         }
-
         return result.OrderBy(dp => dp.Date);
     }
 
@@ -159,7 +157,6 @@ public class ComputeStatMatrix
             Value = value;
             Source = source;
         }
-
         public DateTime Date { get; }
         public string Source { get; }
         public double Value { get; }

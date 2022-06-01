@@ -209,7 +209,7 @@ foreach (var bucketDays in
             Console.WriteLine($"{countOfMissingCgmBucketsThatHaveBgValues} missing CGM buckets, using existing BG buckets in those time intervals instead.");
 
         // TODO: Are there cases where a bucket does not exist for the CGM range?  Do I care? so far no data is invented to fill in gaps.
-        // TODO: How would it improve the analysis by creating wholly interpolated bucet?
+        // TODO: How would it improve the analysis by creating wholly interpolated bucket?
 
         #region interpolate
 
