@@ -1,5 +1,4 @@
-﻿using System.Data;
-using MetabolicStat.FuelStatistics;
+﻿using MetabolicStat.FuelStatistics;
 using MetabolicStat.StatMath;
 
 namespace MetabolicStat;
@@ -65,7 +64,6 @@ internal static class ReportWriter
                 gkiStatOfstats.Add(item.MeanX, item.MeanY * TimeSpan.TicksPerDay);
                 gluStatOfstats.Add(item.GlucoseStat.MeanX(), item.GlucoseStat.MeanY() * TimeSpan.TicksPerDay);
                 ketStatOfstats.Add(item.KetoneStat.MeanX(), item.KetoneStat.MeanY() * TimeSpan.TicksPerDay);
-
             }
 
             var gkiSamples = gkiStats.Sum((gki => gki.N));

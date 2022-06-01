@@ -23,7 +23,7 @@ public class ComputeStatMatrix
         // inadvertently eliminate data from the edges of your arbitrary buckets. To most people reading your reports a quarter of 91.3 days looks no
         // different than a quarter of 90 days.  
         // Caveat: 91.311 days / quarter however will spatially spread the time graphing out correctly when it is charted with a spreadsheet such as excel.
-        
+
         _dateBreaker =
             DateTime.Parse(
                 @"01-01-2015 00:00 -0800"); // begin of first year. IFF datebreaker increment is set to a base 12 fraction of a year

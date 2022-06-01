@@ -1,6 +1,6 @@
-﻿using System.Text.RegularExpressions;
-using MetabolicStat;
+﻿using MetabolicStat;
 using MetabolicStat.FuelStatistics;
+using System.Text.RegularExpressions;
 
 FuelStat[] Interpolate(FuelStat[] inputSet)
 {

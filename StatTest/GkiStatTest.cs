@@ -1,5 +1,5 @@
-using System;
 using MetabolicStat.FuelStatistics;
+using System;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -115,7 +115,7 @@ public class GkiStat : IFuelStat
                                    + ",QxGlu/QxBk"
                                    + ",Glu/18";
 
-      public static string Footer(Statistic gkiStat, Statistic gluStat, Statistic ketStat, double gkiSamples, double gluSamples, double ketSamples)
+    public static string Footer(Statistic gkiStat, Statistic gluStat, Statistic ketStat, double gkiSamples, double gluSamples, double ketSamples)
     {
         //var midBucket = new DateTime((long)gkiStat.MeanY() );
         var minDate = new DateTime((long)gkiStat.MinY);
