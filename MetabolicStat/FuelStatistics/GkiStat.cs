@@ -122,8 +122,8 @@ public class GkiStat : IFuelStat
         var maxDate = new DateTime((long)gkiStat.MaxY);
         return
             $"ttlGki,{minDate.ToShortDateString()}-{maxDate.ToShortDateString()},{gkiStat.MeanX():F2},{gkiStat.MinX:F3},{gkiStat.MaxX:F3},{Math.Sqrt(gkiStat.Qx2()):F3},{gkiStat.Qx():F3},{gkiStat.N:F0}"
-            + $"\r\nttlGlu,{gluStat.MeanX():F3},{gluStat.MinX:F3},{gluStat.MaxX:F3},{gluStat.MaxX:F3},{Math.Sqrt(gluStat.Qx2()):F3},{gluStat.Qx():F3},{gluSamples:F0}"
-            + $"\r\nttlKet,{ketStat.MeanX():F3},{ketStat.MinX:F3},{ketStat.MaxX:F3},{ketStat.MaxX:F3},{Math.Sqrt(ketStat.Qx2()):F3},{ketStat.Qx():F3},{ketSamples:F0}";
+            + $"\r\nttlGlu,{gluStat.MeanX():F3},{gluStat.MinX:F3},{gluStat.MaxX:F3},{Math.Sqrt(gluStat.Qx2()):F3},{gluStat.Qx():F3},{gluSamples:F0}"
+            + $"\r\nttlKet,{ketStat.MeanX():F3},{ketStat.MinX:F3},{ketStat.MaxX:F3},{Math.Sqrt(ketStat.Qx2()):F3},{ketStat.Qx():F3},{ketSamples:F0}";
     }
 
     #endregion
