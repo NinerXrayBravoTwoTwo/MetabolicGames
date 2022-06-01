@@ -1,11 +1,11 @@
-﻿using MetabolicStat.FuelStatistics;
+﻿using System.Data;
+using MetabolicStat.FuelStatistics;
 using MetabolicStat.StatMath;
 
 namespace MetabolicStat;
 
 internal static class ReportWriter
 {
-
     // TODO:  Need to add report summaries from three reports.Need to complete report summary for GKI report
     public static void GenerateMetabolicReports(string? folderName, double bucketDays, IEnumerable<FuelStat> mgStats1,
         FuelStat[] bkStats1, List<GkiStat> list)
@@ -39,9 +39,9 @@ internal static class ReportWriter
             var report = new List<string>
             {
                 ReportTitleBuilder("BK", samples, interval, sum.TimeSpan) // TITLE
-                ,
-                FuelStat.Footer(statOfStats), FuelStat.Header,
-                string.Join("\r\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString())),
+                , FuelStat.Footer(statOfStats)
+                , FuelStat.Header
+                , string.Join("\r\n", result.Where(x => x.Name.StartsWith("BK-")).Select(x => x.ToString())),
                 FuelStat.Footer(statOfStats)
             };
             File.WriteAllLines($"{writeFolderName}\\BK-{interval:N2}-days.csv", report.ToArray());
@@ -51,23 +51,34 @@ internal static class ReportWriter
         {
             // Write GKI report
             var ketoN = gkiStats.Sum(x => x.N);
-            // var gluN = gkiStats.Sum(x => x.Ng);
 
             var mint = DateTime.MaxValue.Ticks;
             var maxt = DateTime.MinValue.Ticks;
 
+            var gkiStatOfstats = new Statistic();
+            var gluStatOfstats = new Statistic();
+            var ketStatOfstats = new Statistic();
             foreach (var item in gkiStats)
             {
                 mint = Math.Min(mint, item.FromDateTime.Ticks);
                 maxt = Math.Max(maxt, item.ToDateTime.Ticks);
+                gkiStatOfstats.Add(item.MeanX, item.MeanY * TimeSpan.TicksPerDay);
+                gluStatOfstats.Add(item.GlucoseStat.MeanX(), item.GlucoseStat.MeanY() * TimeSpan.TicksPerDay);
+                ketStatOfstats.Add(item.KetoneStat.MeanX(), item.KetoneStat.MeanY() * TimeSpan.TicksPerDay);
+
             }
 
+            var gkiSamples = gkiStats.Sum((gki => gki.N));
+            var ketSamples = gkiStats.Sum(gki => gki.KetoneStat.N);
+            var gluSambles = gkiStats.Sum(gki => gki.GlucoseStat.N);
             var gkiSpan = new TimeSpan(maxt - mint);
             var report = new List<string>
             {
                 ReportTitleBuilder("GKI", (int)ketoN, interval, gkiSpan) // TITLE
-                ,
-                GkiStat.Header, string.Join("\r\n", gkiStats.Select(x => x.ToString()))
+                , GkiStat.Footer(gkiStatOfstats, gluStatOfstats, ketStatOfstats, gkiSamples, gluSambles, ketSamples)
+                , GkiStat.Header
+                , string.Join("\r\n", gkiStats.Select(x => x.ToString()))
+                , GkiStat.Footer(gkiStatOfstats, gluStatOfstats, ketStatOfstats, gkiSamples,gluSambles,ketSamples)
             };
 
             File.WriteAllLines($"{writeFolderName}\\GKI-{interval:N2}-days.csv", report.ToArray());
@@ -97,10 +108,10 @@ internal static class ReportWriter
 
             var report = new List<string>
             {
-                FuelStat.Footer(statOfstats),
-                ReportTitleBuilder("BG & CGM", (int)enumerable.Sum(stat => stat.N), interval, timeSpan) // TITLE
-                ,
-                FuelStat.Header, string.Join("\r\n", enumerable.Select(x => x.ToString())), FuelStat.Footer(statOfstats)
+                FuelStat.Footer(statOfstats)
+                , ReportTitleBuilder("BG & CGM", (int)enumerable.Sum(stat => stat.N), interval, timeSpan) // TITLE
+                , FuelStat.Header, string.Join("\r\n", enumerable.Select(x => x.ToString()))
+                , FuelStat.Footer(statOfstats)
             };
 
             File.WriteAllLines($"{writeFolderName}\\CGM-{interval:N2}-days.csv", report.ToArray());

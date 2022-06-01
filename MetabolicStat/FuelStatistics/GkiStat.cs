@@ -38,7 +38,7 @@ public class GkiStat : IFuelStat
             Qx = 0;
         }
 
-        // Save glucose and ketone stat for reporting
+        // Save glucose and ketone gkiStat for reporting
 
         KetoneStat = ketone;
         GlucoseStat = glucose;
@@ -114,6 +114,17 @@ public class GkiStat : IFuelStat
                                    + ",MeanXbk,MinXbk,MaxXbk,sqrt(Qx2)bk,QxBk,Nbk"
                                    + ",QxGlu/QxBk"
                                    + ",Glu/18";
+
+      public static string Footer(Statistic gkiStat, Statistic gluStat, Statistic ketStat, double gkiSamples, double gluSamples, double ketSamples)
+    {
+        //var midBucket = new DateTime((long)gkiStat.MeanY() );
+        var minDate = new DateTime((long)gkiStat.MinY);
+        var maxDate = new DateTime((long)gkiStat.MaxY);
+        return
+            $"ttlGki,{minDate.ToShortDateString()}-{maxDate.ToShortDateString()},{gkiStat.MeanX():F2},{gkiStat.MinX:F3},{gkiStat.MaxX:F3},{Math.Sqrt(gkiStat.Qx2()):F3},{gkiStat.Qx():F3},{gkiStat.N:F0}"
+            + $"\r\nttlGlu,{gluStat.MeanX():F3},{gluStat.MinX:F3},{gluStat.MaxX:F3},{gluStat.MaxX:F3},{Math.Sqrt(gluStat.Qx2()):F3},{gluStat.Qx():F3},{gluSamples:F0}"
+            + $"\r\nttlKet,{ketStat.MeanX():F3},{ketStat.MinX:F3},{ketStat.MaxX:F3},{ketStat.MaxX:F3},{Math.Sqrt(ketStat.Qx2()):F3},{ketStat.Qx():F3},{ketSamples:F0}";
+    }
 
     #endregion
 }
