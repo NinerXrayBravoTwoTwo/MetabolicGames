@@ -1,6 +1,6 @@
 MetabolicStat
 
-## LICENSE GPL - 3
+## [LICENSE GPL - 3](LICENSE.md)
 
 ## DISCLAIMERS
 
