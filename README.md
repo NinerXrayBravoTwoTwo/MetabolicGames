@@ -22,7 +22,7 @@ f> None of the ‘medical’ data in this project represents private patient informa
 
 ## SEE your doctor if you have concerns about your data values.
 
-## 42?
+## [42?](https://www.dictionary.com/e/slang/42/)
 
 Now that you have collected your Glucose and ketone data for a few months,
 (Congratulations you now know that the answer to your question is 42 :))
@@ -83,9 +83,9 @@ Command line, bashsh, sh, or powershell
 
 Create a folder easy to access such as c://MetabolicData/
 create a repo clone of this source and do a 
-
+'''
 git pull repo 
-
+'''
 Use a version of visual studio to build the exe file.
 
 Go to your targe folder where you build the software and run the executable against the target data base file.
