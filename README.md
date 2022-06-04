@@ -16,7 +16,7 @@ c> There are no guarantees expressed or implied.  This software is made availabl
 
 d> I have no conflicts of interest by or for any company where that company is actively perusing wellness programs.
 
-e> This software is based on a very old linear regression algorithm I originally used on a TI-59 calculator in 1978. This statistical algorithm was apparently published in the 1890's.
+e> This software is based on a very old linear regression algorithm I originally used on a TI-59 calculator in 1978. This statistical algorithm was apparently published in the [click Galton 1890's](http://jse.amstat.org/v9n3/stanton.html#Galton)1890's.
 
 f> None of the ‘medical’ data in this project represents private patient information protected by HIPAA.  It is all test data.
 
@@ -75,7 +75,7 @@ date|name|meanx|minx|maxx|sdx|slope|N
 
 (under construction)
 
-This current version writes the statistics *.csv files to the same folder/directory where the data file resids.
+This current version writes the statistics *.csv files to the same folder/directory where the data file resides.
 
 I am using it this way:
 
