@@ -75,20 +75,20 @@ public class ComputeStatMatrix
                 bucketRange += $"{_dateBreaker.ToShortDateString()}";
             }
 
-            // Separate by Source
-            // transform source names, add time component to source
+            // Separate by Type
+            // transform type names, add time component to type
 
             string targetBucket;
 
-            if (Regex.IsMatch(item.Source, @"^Gluco"))
+            if (Regex.IsMatch(item.Type, @"^Gluco"))
             {
                 targetBucket = item.Value < 35 ? "CGM_err" : $"CGM-{bucketRange}";
             }
-            else if (Regex.IsMatch(item.Source, @"^BloodGluco"))
+            else if (Regex.IsMatch(item.Type, @"^BloodGluco"))
             {
                 targetBucket = item.Value is < 300 and >= 35 ? $"BG-{bucketRange}" : "BG_err";
             }
-            else if (Regex.IsMatch(item.Source, @"^BloodKetone"))
+            else if (Regex.IsMatch(item.Type, @"^BloodKetone"))
             {
                 targetBucket = $"BK-{bucketRange}";
             }
@@ -125,7 +125,7 @@ public class ComputeStatMatrix
         var result = new List<DataPoint>();
 
         Regex dateMatch = new(@",(\d+-\d\d-\d\d \d\d:\d\d:\d\d (-0\d00)),", RegexOptions.Compiled);
-        Regex sourceMatch = new(@"^(Gluco\w+|Blood\w+),(\d+\.\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        Regex typeMatch = new(@"^(Gluco\w+|Blood\w+),(\d+\.\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         foreach (var line in File.ReadLines(fileName))
         {
@@ -135,30 +135,30 @@ public class ComputeStatMatrix
             var dateString = dateMatch.Match(line);
             if (!dateString.Success) continue;
 
-            // Find source and value stat group and y value
-            var sourceString = sourceMatch.Match(line);
-            if (!sourceString.Success) continue;
+            // Find type and value stat group and y value
+            var typeString = typeMatch.Match(line);
+            if (!typeString.Success) continue;
 
 
             var date = DateTime.Parse(dateString.Groups[1].Value);
-            var value = double.Parse(sourceString.Groups[2].Value);
-            var source = sourceString.Groups[1].Value;
+            var value = double.Parse(typeString.Groups[2].Value);
+            var type = typeString.Groups[1].Value;
 
-            result.Add(new DataPoint(date, source, value));
+            result.Add(new DataPoint(date, type, value));
         }
         return result.OrderBy(dp => dp.Date);
     }
 
     public class DataPoint
     {
-        public DataPoint(DateTime date, string source, double value)
+        public DataPoint(DateTime date, string type, double value)
         {
             Date = date;
             Value = value;
-            Source = source;
+            Type = type;
         }
         public DateTime Date { get; }
-        public string Source { get; }
+        public string Type { get; }
         public double Value { get; }
     }
 }
