@@ -86,7 +86,7 @@ public class ComputeStatMatrix
             }
             else if (Regex.IsMatch(item.Type, @"^BloodGluco"))
             {
-                targetBucket = item.Value is < 300 and >= 35 ? $"BG-{bucketRange}" : "BG_err";
+                targetBucket = item.Value is < 220 and >= 35 ? $"BG-{bucketRange}" : "BG_err";
             }
             else if (Regex.IsMatch(item.Type, @"^BloodKetone"))
             {
