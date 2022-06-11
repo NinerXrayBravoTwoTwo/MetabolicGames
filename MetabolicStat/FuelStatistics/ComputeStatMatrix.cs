@@ -86,6 +86,7 @@ public class ComputeStatMatrix
             }
             else if (Regex.IsMatch(item.Type, @"^BloodGluco"))
             {
+                // TODO: Add a json configuration file for user configurable runtime params.
                 targetBucket = item.Value is < 220 and >= 35 ? $"BG-{bucketRange}" : "BG_err";
             }
             else if (Regex.IsMatch(item.Type, @"^BloodKetone"))
