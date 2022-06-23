@@ -92,8 +92,8 @@ internal static class ReportWriter
             //var glucose = listGlucose;
             var enumerable = listGlucose;
 
-            var statOfstats = new Statistic();
-            var statOfglucose = new Statistic();
+            var statOfstats = new FuelStat("LR-total");
+            var statOfglucose = new FuelStat("LR-total");
 
             foreach (var item in enumerable)
             {
@@ -108,7 +108,9 @@ internal static class ReportWriter
             {
                 FuelStat.Footer(statOfstats)
                 , ReportTitleBuilder("BG & CGM", (int)enumerable.Sum(stat => stat.N), interval, timeSpan) // TITLE
-                , FuelStat.Header, string.Join("\r\n", enumerable.Select(x => x.ToString()))
+                , FuelStat.Header
+                , string.Join("\r\n", enumerable.Select(x => x.ToString()))
+                , string.Join("\r\n", statOfglucose.ToString())
                 , FuelStat.Footer(statOfstats)
             };
 
