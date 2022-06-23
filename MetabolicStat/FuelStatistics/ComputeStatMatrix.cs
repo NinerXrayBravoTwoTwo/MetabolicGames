@@ -62,17 +62,17 @@ public class ComputeStatMatrix
             // bucket interval is from (inclusive) -> to (exclusive) to avoid same data in two buckets
             if (item.Date >= _dateBreaker)
             {
-                bucketRange = $"{_dateBreaker.ToShortDateString()}-";
+                bucketRange = $"{_dateBreaker.ToString("yy/MM/dd")}-";
 
                 while (item.Date >= _dateBreaker)
                 {
-                    bucketRange = $"{_dateBreaker.ToShortDateString()}-";
+                    bucketRange = $"{_dateBreaker.ToString("yy/MM/dd")}-";
                     // creating bucket sizes that are fractions of year, in days.  year = 12 months, month = 30.4 days, and sub sequent halves progression
                     // days: 486.9896  (1.33) 243.4948 (0.66) 121.7474 (1/3) 91.31058 (1/4) 60.87373 (1/6) 30.43685 (1/12) 15.218425 (1/24) 7.6092125 (1/48) 3.80460625 (1/96) 1.9023031 (1/192) 0.95114625 (1/384)  0.4755757813 (1/768)
                     _dateBreaker = _dateBreaker.AddDays(bucketDays);
                 }
 
-                bucketRange += $"{_dateBreaker.ToShortDateString()}";
+                bucketRange += $"{_dateBreaker.ToString("yy/MM/dd")}";
             }
 
             // Separate by Type

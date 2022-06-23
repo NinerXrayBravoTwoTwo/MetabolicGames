@@ -92,12 +92,12 @@ public class GkiStat : IFuelStat
         {
             result = !GlucoseStat.IsNaN && !KetoneStat.IsNaN
                 ? $"{FromDateTime.ToShortDateString()},{Name}"
-                  + $",{MeanX:F2},{MinX:F2},{MaxX:F2},{Math.Sqrt(Qx2):F4},{Qx:F4},{N}" //GKI
-                  + $",{GlucoseStat.MeanX():F2},{GlucoseStat.MinX:F2},{GlucoseStat.MaxX:F2},{Math.Sqrt(GlucoseStat.Qx2()):F4},{GlucoseStat.Qx():F4},{GlucoseStat.N}" // GLU
-                  + $",{KetoneStat.MeanX():F2},{KetoneStat.MinX:F2},{KetoneStat.MaxX:F2},{Math.Sqrt(KetoneStat.Qx2()):F4},{KetoneStat.Qx():F4},{KetoneStat.N}" //BK
-                  + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():F4}"
-                  + $",{GlucoseStat.MeanX() / 18:F4}"
-                : $",{Name}, Glucose:{GlucoseStat.N}, Ketone: {KetoneStat.N}";
+                  + $",{MeanX:F2},{MinX:F2},{MaxX:F2},{Math.Sqrt(Qx2):F3},{Qx:F3},{N}" //GKI
+                  + $",{GlucoseStat.MeanX():F2},{GlucoseStat.MinX:F2},{GlucoseStat.MaxX:F2},{Math.Sqrt(GlucoseStat.Qx2()):F3},{GlucoseStat.Qx():F3},{GlucoseStat.N}" // GLU
+                  + $",{KetoneStat.MeanX():F2},{KetoneStat.MinX:F2},{KetoneStat.MaxX:F2},{Math.Sqrt(KetoneStat.Qx2()):F3},{KetoneStat.Qx():F3},{KetoneStat.N}" //BK
+                  + $",{GlucoseStat.Qx() / 18 / KetoneStat.Qx():F3}"
+                  + $",{GlucoseStat.MeanX() / 18:F3}"
+                : $",{Name},Glucose:{GlucoseStat.N},Ketone: {KetoneStat.N}";
         }
         catch (Exception error)
         {
